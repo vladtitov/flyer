@@ -219,7 +219,7 @@ declare module createjs {
 
         // methods
         cache(x: number, y: number, width: number, height: number, scale?: number): void;
-        clone(): DisplayObject;
+        clone(deep?:boolean): DisplayObject;
         draw(ctx: CanvasRenderingContext2D, ignoreCache?: boolean): boolean;
         getBounds(): Rectangle;
         getCacheDataURL(): string;

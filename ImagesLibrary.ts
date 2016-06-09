@@ -1,9 +1,9 @@
 /**
  * Created by VladHome on 1/29/2016.
  */
-    ///<reference path="../typings/jquery.d.ts"/>
-/// <reference path="../typings/tweenjs.d.ts" />
-/// <reference path="../typings/easeljs.d.ts" />
+    ///<reference path="typings/jquery.d.ts"/>
+/// <reference path="typings/tweenjs.d.ts" />
+/// <reference path="typings/easeljs.d.ts" />
     ///<reference path="Gallery4.ts"/>
     module hallmark {
     import Bitmap = createjs.Bitmap;

@@ -6,9 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 /**
  * Created by VladHome on 1/29/2016.
  */
-///<reference path="../typings/jquery.d.ts"/>
-/// <reference path="../typings/tweenjs.d.ts" />
-/// <reference path="../typings/easeljs.d.ts" />
+///<reference path="typings/jquery.d.ts"/>
+/// <reference path="typings/tweenjs.d.ts" />
+/// <reference path="typings/easeljs.d.ts" />
 ///<reference path="Gallery4.ts"/>
 var hallmark;
 (function (hallmark) {
