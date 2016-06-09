@@ -2,9 +2,9 @@
 /**
  * Created by VladHome on 1/8/2016.
  */
-///<reference path="../typings/jquery.d.ts"/>
-/// <reference path="../typings/tweenjs.d.ts" />
-/// <reference path="../typings/easeljs.d.ts" />
+///<reference path="typings/jquery.d.ts"/>
+/// <reference path="Typings/tweenjs.d.ts" />
+/// <reference path="typings/easeljs.d.ts" />
 ///<reference path="ImagesRow.ts"/>
 ///<reference path="ImagesLibrary.ts"/>
 
