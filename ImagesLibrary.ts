@@ -17,15 +17,32 @@
     import Shape = createjs.Shape;
     import Rectangle = createjs.Rectangle;
 
+    interface VOImage {
+        cats: string,
+        large: string,
+        name: string,
+        price: number,
+        sale: boolean,
+        thumb: string
+    }
 
-    export class ImageHolder extends Container {
-        static onImageLoaded(){
+    interface ImageThumb extends VOImage {
+        categories: number []
+    }
 
-        }
-
+    export class ImageHolder extends Container implements ImageThumb {
+        cats: string;
+        large: string;
+        name: string;
+        price: number;
+        sale: boolean;
+        thumb: string;
+        categories: number [];
         constructor(public vo:VOImage,size) {
             super();
-            this.name = String(vo.id)
+            for ( var str in vo ) this [str] = vo [str];
+            this.categories = vo.cats.split(",").map(Number);
+            //this.name = String(vo)
             var img = new Image();
             img.src = vo.thumb;
             img.onload = (event)=> {
@@ -55,8 +72,7 @@
 
                 this.cache(0, 0, size, size);
 
-               if(ImagesLibrary.onImageLoaded)ImagesLibrary.onImageLoaded();
-
+               ImagesLibrary.dispatcher.triggerHandler ("IMAGE_LOADED");
             }
 
             // var cont:Container = new Container();
@@ -69,7 +85,7 @@
     }
 
 
-    export class VOImage{
+    /*export class VOImage{
         name:string;
         id:number;
         thumb:string;
@@ -83,21 +99,37 @@
             this.cats=obj.cats.split(',').map(Number);
         }
 
-    }
+    }*/
+
     export class ImagesLibrary {
-      static onImageLoaded:Function;
-        data:VOImage[];
+        //static onImageLoaded:Function;
+        static dispatcher:JQuery = $({});
+        data:ImageHolder[];
         private price1:Bitmap;
         private price2:Bitmap;
         static instance:ImagesLibrary;
-        constructor(ar:VOImage[],private options:any){
-            ImagesLibrary.instance =  this;
-            var out:VOImage[]=[]
-            for (var i = 0, n = ar.length; i < n; i++)   out.push(new VOImage(ar[i],i)) ;//  this.addImages(i,this.renderSet(ar[i],i.toString()));
-            this.data = out;
-            this.images = this.loadThumbs(out);
-            this.createPrices();
+        constructor(private options:any){
+        //    ImagesLibrary.instance =  this;
+        //    this.createPrices();
+            this.loadData(options.url);
         }
+  
+        private loadData(url:string):void{
+            $.get(url).done((res)=>{
+                //console.log(res);
+                //this.images.resolve(res);
+                var out:ImageHolder[]=[];
+                var size = this.options.thumbSize;
+                for (var i = 0, n = res.length; i < n; i++) {
+                    var image = new ImageHolder(res[i], size );
+                    image.name = i + "";
+                    out.push(image);
+                }
+                //this.data = out;
+                this.images = out;
+            })
+        }
+        
 
         getPrice1():Bitmap{
             return this.price1.clone();

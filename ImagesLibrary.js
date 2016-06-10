@@ -21,7 +21,10 @@ var hallmark;
             var _this = this;
             _super.call(this);
             this.vo = vo;
-            this.name = String(vo.id);
+            for (var str in vo)
+                this[str] = vo[str];
+            this.categories = vo.cats.split(",").map(Number);
+            //this.name = String(vo)
             var img = new Image();
             img.src = vo.thumb;
             img.onload = function (event) {
@@ -47,8 +50,7 @@ var hallmark;
                 // cont.addChild(txt);
                 // this.addChild(cont);
                 _this.cache(0, 0, size, size);
-                if (ImagesLibrary.onImageLoaded)
-                    ImagesLibrary.onImageLoaded();
+                ImagesLibrary.dispatcher.triggerHandler("IMAGE_LOADED");
             };
             // var cont:Container = new Container();
             var sh = new Shape();
@@ -56,34 +58,49 @@ var hallmark;
             sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
             this.addChild(sh);
         }
-        ImageHolder.onImageLoaded = function () {
-        };
         return ImageHolder;
     }(Container));
     hallmark.ImageHolder = ImageHolder;
-    var VOImage = (function () {
-        function VOImage(obj, i) {
-            this.id = i;
-            for (var str in obj)
-                this[str] = obj[str];
-            this.cats = obj.cats.split(',').map(Number);
+    /*export class VOImage{
+        name:string;
+        id:number;
+        thumb:string;
+        image:string;
+        price:string;
+        sale:boolean;
+        cats:number[];
+        constructor(obj,i:number){
+            this.id=i;
+            for(var str in obj)this[str] = obj[str];
+            this.cats=obj.cats.split(',').map(Number);
         }
-        return VOImage;
-    }());
-    hallmark.VOImage = VOImage;
+
+    }*/
     var ImagesLibrary = (function () {
-        function ImagesLibrary(ar, options) {
+        function ImagesLibrary(options) {
             this.options = options;
             this.images = [];
             this.current = 0;
-            ImagesLibrary.instance = this;
-            var out = [];
-            for (var i = 0, n = ar.length; i < n; i++)
-                out.push(new VOImage(ar[i], i)); //  this.addImages(i,this.renderSet(ar[i],i.toString()));
-            this.data = out;
-            this.images = this.loadThumbs(out);
-            this.createPrices();
+            //    ImagesLibrary.instance =  this;
+            //    this.createPrices();
+            this.loadData(options.url);
         }
+        ImagesLibrary.prototype.loadData = function (url) {
+            var _this = this;
+            $.get(url).done(function (res) {
+                //console.log(res);
+                //this.images.resolve(res);
+                var out = [];
+                var size = _this.options.thumbSize;
+                for (var i = 0, n = res.length; i < n; i++) {
+                    var image = new ImageHolder(res[i], size);
+                    image.name = i + "";
+                    out.push(image);
+                }
+                //this.data = out;
+                _this.images = out;
+            });
+        };
         ImagesLibrary.prototype.getPrice1 = function () {
             return this.price1.clone();
         };
@@ -131,6 +148,8 @@ var hallmark;
             }
             return out;
         };
+        //static onImageLoaded:Function;
+        ImagesLibrary.dispatcher = $({});
         return ImagesLibrary;
     }());
     hallmark.ImagesLibrary = ImagesLibrary;

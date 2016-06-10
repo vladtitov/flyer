@@ -53,44 +53,12 @@
     </section>
     <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
 
+    <script src="ImageView.js"></script>
     <script src="ImagesLibrary.js"></script>
-    <script src="ImagesRow.js"></script>
+    <script src="ImagesColumn.js"></script>
     <script src="Gallery4.js"></script>
     <script>
-        $(document).ready(function(){
-            console.log($(window ).width()+'x'+$(window ).height());
-            var width  = $(window ).width();
-            var height  = $(window ).height();
-
-            var cols = 5;
-            var rows = 7;
-            if(width<500){
-                rows=5;
-                cols=4;
-            }
-
-
-
-            var options={
-                canvasWidth:width,
-                canvasHeight:height,
-                getimages:'getimages.php',
-                thumbSize:100,
-                thumbDistance:120,
-                rowHeight:120,
-                rowWidth:width+50,
-               // rows:5,
-              //  cols:4,
-                 rows:7,
-                 cols:5,
-                prviewPaddingX:10,
-                prviewPaddingY:10,
-                previwWidth:width-20,
-                previwHeight:height -20
-            }
-
-            var gal = new hallmark.App($('#mainview'),options);
-        })
+        
     </script>
 </div>
 </body>

@@ -5,8 +5,10 @@
 ///<reference path="typings/jquery.d.ts"/>
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
-///<reference path="ImagesRow.ts"/>
+///<reference path="ImagesColumn.ts"/>
 ///<reference path="ImagesLibrary.ts"/>
+///<reference path="ImageView.ts"/>
+
 
     declare var require:any;
 
@@ -47,142 +49,45 @@ namespace hallmark{
 
     }
 
-    export class ImageView{
-
-        onImageReady:Function;
-       setImage(cont:Container,url:string,x:number,y:number,fromW:number,fromH:number,toW:number,toH:number,paddingX:number,paddingY:number):DisplayObject{
-           var img = new Image();
-           img.src = url;
-           var bmp:createjs.Bitmap = new createjs.Bitmap(img);
-           bmp.x=x;
-           bmp.y=y;
-           img.onload = (event)=> {
-               var w = img.naturalWidth;
-               var h = img.naturalHeight;
-               var scaleX = fromW/w;
-               var scaleY = fromH/h;
-               var scale=scaleX;
-               if(scaleX>scaleY) scale = scaleY;
-               bmp.scaleX = scale;
-               bmp.scaleY = scale;
-               bmp.x+= (fromW -(w*scale)) / 2;
-               bmp.y+= (fromH - (h*scale)) / 2;
-               scaleX = toW/w;
-               scaleY = toH/h;
-               scale = (scaleX>scaleY)?scaleY:scaleX;
-
-               x = (toW -(w*scale))/2;
-               y = (toH-(h*scale))/2;
-
-               if(this.onImageReady)this.onImageReady();
-               createjs.Tween.get(bmp).to({scaleX:scale,scaleY:scale,x:x+paddingX,y:y+paddingY}, 500,createjs.Ease.quadIn).call(()=>this.onZoomInComplete());
-               cont.addChild(bmp);
-           }
-           return bmp;
-       }
-
-        private onZoomInComplete(){
-
-        }
-        private zoomImage():void{
-
-        }
-    }
-
-    export class ImagePreview{
-        view:Container;
-        onClick:Function;
-
-        current:DisplayObject;
-        imageView:ImageView;
-        constructor(private options:Options){
-            this.view = new Container();
-            this.view.addEventListener('click',()=>{
-                console.log('click');
-                this.removeMe();
-                if(this.onClick)this.onClick();
-            })
-
-            var self = this;
-            this.ticker = function(){
-                self.tick();
-            }
-
-            this.imageView = new ImageView();
-            this.imageView.onImageReady = ()=>{
-
-            }
-
-        }
-
-        num:number;
-
-        ticker:EventListener;
-        start():void{
-            this.num=0;
-            createjs.Ticker.addEventListener("tick",this.ticker);
-        }
-        stop():void{
-            var ticker = this.ticker;
-            createjs.Ticker.removeEventListener("tick",this.ticker);
-        }
-        tick():void{
-
-        this.num++;
-           // console.log(this.num);
-           // console.log('tick');
-        }
-
-        removeMe():void{
-            this.num=0;
-            this.stop();
-            this.view.parent.removeChild(this.view)
-        }
-
-        showImage(DO:DisplayObject,source:ImageHolder) {
-            this.start();
-            this.view.removeAllChildren();
-
-            DO = DO.parent;
-            var pt = DO.localToGlobal(0, 0);
-            var bmp:DisplayObject = this.imageView.setImage(this.view, source.vo.image, pt.x, pt.y,
-                this.options.thumbSize, this.options.thumbSize, this.options.previwWidth, this.options.previwHeight,
-                this.options.prviewPaddingX, this.options.prviewPaddingY);
-
-        }
-    }
+   
 
     export class Gallery4{
         stage:createjs.Stage;
-        data:VOImage[];
+        //data:VOImage[];
         isWebGL:boolean
         imagesLibrary:ImagesLibrary;
         private current:number;
         private preview:ImagePreview;
-        constructor($view,data:VOImage[],options:any){
+        constructor($view, options:any){
 
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
             $view.append(canv);
-           this.stage = new createjs.Stage(canv);
-            this.data = data;
-            this.imagesLibrary = new ImagesLibrary(data,options);
+            this.stage = new createjs.Stage(canv);
+            //this.data = data;
+            this.imagesLibrary = new ImagesLibrary(options);
             var count = 0;
-            ImagesLibrary.onImageLoaded = ()=>{
+            ImagesLibrary.dispatcher.on ("IMAGE_LOADED", () => {
+               if (count++ >50) {
+                   ImagesLibrary.dispatcher.off ("IMAGE_LOADED");
+                   this.createColumn(options);
+               };
+            });
+            /*ImagesLibrary.onImageLoaded = ()=>{
                 count++;
                 //console.log(count);
               if(count>50){
-                  ImagesLibrary.onImageLoaded = null;
-                  this.createRows(options);
+                  ImagesLibrary.onImageLoaded;
+                  this.createColumn(options);
               }
-            }
+            }*/
 
-           ImagesRow.onImageClick = (DO:DisplayObject)=>{
-              var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
+            ImagesColumn.onImageClick = (DO:DisplayObject)=>{
+               var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
                if(img) this.preview.showImage(DO,img);
                this.stage.addChild(this.preview.view);
-           }
+            }
 
             this.preview = new ImagePreview(options);
 
@@ -209,13 +114,13 @@ namespace hallmark{
 
 
         }
-        createRows(options):void{
+        createColumn(options):void{
 
-            for(var i=0,n=options.rows;i<n;i++){
-                var row:ImagesRow = new ImagesRow(this.imagesLibrary,options,i);
-                row.setPosition(0,i*options.rowHeight);
-                row.createBackground('#999999');
-                this.stage.addChild(row.view);
+            for(var i=0; i<3; i++) {
+                var column:ImagesColumn = new ImagesColumn(this.imagesLibrary,options,i);
+                column.setPosition(i*105,10);
+                column.createBackground('#999999');
+                this.stage.addChild(column.view);
             }
         }
 
@@ -228,46 +133,47 @@ namespace hallmark{
         ns:string;
     }
     export class App{
-        images:JQueryDeferred<VOImage[]>;
+        //images:JQueryDeferred<VOImage[]>;
         gallery:Gallery4;
         constructor($view:JQuery,opt:any){
-
-
-            this.images=$.Deferred();
-            this.loadData(opt.getimages);
-            this.init($view,opt);
-           // require(['easel','tween'],()=>{
-              //  require(['js/videopuzzle/ImageHolder','js/videopuzzle/Camera','js/videopuzzle/Puzzles','js/videopuzzle/myPuzzle'], ()=> {
-                  //  this.init($view);
-
-               // });
-           // });
-        }
-
-        init($view,options):void{
-          //  console.log($view);
-
-            this.images.then((data)=>{
-
-                this.gallery = new hallmark.Gallery4($view,data,options);
-                if(this.gallery.isWebGL){
-                    $('body').css('background','#00FF00');
-                }else{
-
-                }
-
-            })
-
-        }
-
-        loadData(url:string):void{
-            $.get(url).done((res)=>{
-             //  console.log(res);
-                this.images.resolve(res);
-            })
+            this.gallery = new hallmark.Gallery4($view, opt);
         }
     }
 }
 
+$(document).ready(function(){
+    console.log($(window ).width()+'x'+$(window ).height());
+    var width  = $(window ).width();
+    var height  = $(window ).height();
+
+    var cols = 5;
+    var rows = 7;
+    if(width<500){
+        rows=5;
+        cols=4;
+    }
+
+
+
+    var options={
+        canvasWidth:width,
+        canvasHeight:height,
+        url:'getimages.php',
+        thumbSize:100,
+        thumbDistance:110,
+        rowHeight: height,
+        rowWidth:width,
+        // rows:5,
+        //  cols:4,
+        rows:7,
+        cols:5,
+        prviewPaddingX:10,
+        prviewPaddingY:10,
+        previewWidth:width-20,
+        previewHeight:height-20
+    }
+
+    var gal = new hallmark.App($('#mainview'),options);
+})
 
 

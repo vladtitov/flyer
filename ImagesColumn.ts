@@ -17,7 +17,7 @@ module hallmark{
     import Container = createjs.Container;
     import Shape = createjs.Shape;
 
-export class ImagesRow{
+export class ImagesColumn{
     images:DisplayObject[]=[];
     view:Container;
 
@@ -31,7 +31,7 @@ export class ImagesRow{
         this.dist=opt.thumbDistance;
 
         var cont:Container = new Container();
-        cont.name = 'row_'+id;
+        cont.name = 'column_'+id;
 
         this.view = cont;
         this.first=0;
@@ -41,20 +41,20 @@ export class ImagesRow{
         var prev:number=0;
 
         var pressStart:number;
+        
         this.view.addEventListener('mousedown',(evt:MouseEvent)=> {
             this.isMove = false;
             this.pointerid = evt.pointerID;
-            prev = evt.stageX;
-            pressStart = evt.stageX;
+            prev = evt.stageY;
+            pressStart = evt.stageY;
             if(Math.abs(this.speed)>5)pressStart=0;
             this.speed=0;
             clearInterval(this.interval);
         });
 
         this.view.addEventListener('pressup',(evt:MouseEvent)=>{
-
-            if(pressStart !==0 && Math.abs(pressStart-evt.stageX)<6){
-                if(ImagesRow.onImageClick)ImagesRow.onImageClick(evt.target)
+            if(pressStart !==0 && Math.abs(pressStart-evt.stageY)<6){
+                if(ImagesColumn.onImageClick)ImagesColumn.onImageClick(evt.target)
             }
             this.pointerid=-1;
             var self = this;
@@ -64,9 +64,8 @@ export class ImagesRow{
         });
 
         this.view.addEventListener('pressmove',(evt:MouseEvent)=>{
-            //  console.log(evt);
             if(evt.pointerID!==this.pointerid) return;
-            var now:number = evt.stageX;
+            var now:number = evt.stageY;
             var d:number = now - prev;
             prev=now;
             this.move(d)
@@ -93,8 +92,9 @@ export class ImagesRow{
     }
 
     static onImageClick:Function;
+    
     private addImages(options):void{
-      var num = options.cols;//  Math.floor(options.canvasWidth/options.thumbSize);
+      var num = options.cols;
         var imgs:DisplayObject[]=[];
         for (var i = 0, n = num; i < n; i++) {
             var bmp:DisplayObject = this.lib.getNext();
@@ -121,7 +121,7 @@ export class ImagesRow{
 
     addChild(onStart){
         var bmp:DisplayObject = this.lib.getNext();
-        bmp.x=onStart?0:this.opt.W;
+        bmp.y=onStart?0:this.opt.W;
         return  this.view.addChild(bmp);
     }
 
@@ -130,43 +130,41 @@ export class ImagesRow{
         var ar = this.images;
         for (var i = 0, n = ar.length; i < n; i++) {
             var item = ar[i];
-            item.x=i*this.dist+first;
+            item.y=i*this.dist+first;
         }
     }
 
-
-
     private first:number;
+
     move(dist):void{
         // if(this.speed>10 && dist<-10) return;
         // else if(this.speed<-10 && dist>10) return;
         if(this.speed !=0 && Math.abs(dist/this.speed)>10) {
-            console.log('jump');
+            //console.log('jump');
             return
         }
-
+        
         this.speed = dist;
-       this.first+=dist;
-       this.arangeImages();
-
-        if(this.first<-this.dist) {
-           // console.log(this.first);
+        this.first+= dist;
+        this.arangeImages();
+        //console.log(this.first, this.dist);
+        if((this.first)<-this.dist) {
+            // console.log(this.first);
             var img:DisplayObject = this.images.shift();
             this.view.removeChild(img);
             img = this.lib.getNext();
-            img.x = -this.dist*1.2;
+            img.y = -this.dist*1.2;
             this.images.push(img);
             this.view.addChild(img)
             this.first = this.first + this.dist;
            // this.arangeImages();
 
         } else if(this.first>0){
-            console.log(this.images.length);
+            //console.log(this.images.length);
             var img:DisplayObject = this.images.pop();
             this.view.removeChild(img);
             img = this.lib.getNext();
-           img.x = this.first - this.dist;
-
+            img.y = this.first - this.dist;
             this.images.unshift(img);
             this.view.addChild(img);
           //  console.log(this.first);
@@ -184,12 +182,12 @@ export class ImagesRow{
 
     private moveImages(dist){
         var ar = this.images;
-        for (var i = 0, n = ar.length; i < n; i++) {
+        for (var i = 0; i < 3; i++) {
             var item = ar[i];
-            item.x=item.x+dist;
-            if(item.x>this.opt.W || item.x<-this.opt.imageWidth){
-                this.view.removeChild(item);
-                ar[i] = this.addChild(item.x>0);
+            item.y=item.y+dist;
+            if(item.y>this.opt.H || item.y<-this.opt.imageHeight){
+                 this.view.removeChild(item);
+                ar[i] = this.addChild(item.y>0);
             }
            // this.arangeImages2();
         }
