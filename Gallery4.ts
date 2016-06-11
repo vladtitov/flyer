@@ -74,25 +74,14 @@ namespace hallmark{
                    this.createColumn(options);
                };
             });
-            /*ImagesLibrary.onImageLoaded = ()=>{
-                count++;
-                //console.log(count);
-              if(count>50){
-                  ImagesLibrary.onImageLoaded;
-                  this.createColumn(options);
-              }
-            }*/
-
+  
             ImagesColumn.onImageClick = (DO:DisplayObject)=>{
-               var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
-               if(img) this.preview.showImage(DO,img);
-               this.stage.addChild(this.preview.view);
+                var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
+                if(img) this.preview.showImage(DO,img);
+                this.stage.addChild(this.preview.view);
             }
 
             this.preview = new ImagePreview(options);
-
-
-           // this.isWebGL = this.stage.isWebGL
 
             createjs.Touch.enable(this.stage);
             createjs.Ticker.framerate = 60;
@@ -118,7 +107,7 @@ namespace hallmark{
 
             for(var i=0; i<3; i++) {
                 var column:ImagesColumn = new ImagesColumn(this.imagesLibrary,options,i);
-                column.setPosition(i*105,10);
+                column.setPosition(i*110+5, 10);
                 column.createBackground('#999999');
                 this.stage.addChild(column.view);
             }
@@ -162,7 +151,7 @@ $(document).ready(function(){
         thumbSize:100,
         thumbDistance:110,
         rowHeight: height,
-        rowWidth:width,
+        rowWidth: 105,
         // rows:5,
         //  cols:4,
         rows:7,

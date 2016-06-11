@@ -43,6 +43,7 @@ export class ImagesColumn{
         var pressStart:number;
         
         this.view.addEventListener('mousedown',(evt:MouseEvent)=> {
+            console.log(evt);
             this.isMove = false;
             this.pointerid = evt.pointerID;
             prev = evt.stageY;
@@ -56,6 +57,7 @@ export class ImagesColumn{
             if(pressStart !==0 && Math.abs(pressStart-evt.stageY)<6){
                 if(ImagesColumn.onImageClick)ImagesColumn.onImageClick(evt.target)
             }
+            console.log(evt);
             this.pointerid=-1;
             var self = this;
             if(Math.abs(this.speed)>5){
@@ -92,6 +94,7 @@ export class ImagesColumn{
     }
 
     static onImageClick:Function;
+    static onImageDrag:Function;
     
     private addImages(options):void{
       var num = options.cols;

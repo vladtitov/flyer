@@ -34,14 +34,6 @@ var hallmark;
                 }
                 ;
             });
-            /*ImagesLibrary.onImageLoaded = ()=>{
-                count++;
-                //console.log(count);
-              if(count>50){
-                  ImagesLibrary.onImageLoaded;
-                  this.createColumn(options);
-              }
-            }*/
             hallmark.ImagesColumn.onImageClick = function (DO) {
                 var img = _this.imagesLibrary.getImageByReference(DO);
                 if (img)
@@ -49,7 +41,6 @@ var hallmark;
                 _this.stage.addChild(_this.preview.view);
             };
             this.preview = new hallmark.ImagePreview(options);
-            // this.isWebGL = this.stage.isWebGL
             createjs.Touch.enable(this.stage);
             createjs.Ticker.framerate = 60;
             var stage = this.stage;
@@ -69,7 +60,7 @@ var hallmark;
         Gallery4.prototype.createColumn = function (options) {
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
-                column.setPosition(i * 105, 10);
+                column.setPosition(i * 110 + 5, 10);
                 column.createBackground('#999999');
                 this.stage.addChild(column.view);
             }
@@ -102,7 +93,7 @@ $(document).ready(function () {
         thumbSize: 100,
         thumbDistance: 110,
         rowHeight: height,
-        rowWidth: width,
+        rowWidth: 105,
         // rows:5,
         //  cols:4,
         rows: 7,
