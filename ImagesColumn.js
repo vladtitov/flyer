@@ -5,6 +5,7 @@
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="Gallery4.ts"/>
+///<reference path="ImagesLibrary.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;
@@ -26,7 +27,6 @@ var hallmark;
             var prev = 0;
             var pressStart;
             this.view.addEventListener('mousedown', function (evt) {
-                console.log(evt);
                 _this.isMove = false;
                 _this.pointerid = evt.pointerID;
                 prev = evt.stageY;
@@ -34,28 +34,27 @@ var hallmark;
                 if (Math.abs(_this.speed) > 5)
                     pressStart = 0;
                 _this.speed = 0;
-                clearInterval(_this.interval);
+                clearTimeout(_this.holdTimer);
+                _this.holdTimer = setTimeout(function () { return _this.onPressHold(evt); }, 1000);
             });
-            this.view.addEventListener('pressup', function (evt) {
+            this.view.addEventListener('mouseup', function (evt) {
                 if (pressStart !== 0 && Math.abs(pressStart - evt.stageY) < 6) {
                     if (ImagesColumn.onImageClick)
                         ImagesColumn.onImageClick(evt.target);
                 }
-                console.log(evt);
                 _this.pointerid = -1;
                 var self = _this;
                 if (Math.abs(_this.speed) > 5) {
                     _this.isMove = true;
                 }
             });
-            this.view.addEventListener('pressmove', function (evt) {
-                if (evt.pointerID !== _this.pointerid)
-                    return;
-                var now = evt.stageY;
-                var d = now - prev;
-                prev = now;
-                _this.move(d);
-            });
+            /*this.view.addEventListener('pressmove',(evt:MouseEvent)=>{
+                 if(evt.pointerID!==this.pointerid) return;
+                 var now:number = evt.stageY;
+                 var d:number = now - prev;
+                 prev=now;
+                 this.move(d);
+             });*/
             var self = this;
             var count = 0;
             var stamp = Date.now();
@@ -74,6 +73,20 @@ var hallmark;
                 }
             });
         }
+        ImagesColumn.prototype.onImageSelected = function (img) {
+        };
+        ;
+        ImagesColumn.prototype.onPressHold = function (evt) {
+            var DO = evt.target;
+            var stage = this.view.stage;
+            var p = DO.localToGlobal(DO.x, DO.y);
+            var img = {};
+            img.p = p;
+            img.image = evt.target.image;
+            this.onImageSelected(img);
+            //this.view.dispatchEvent("IMAGE_SELECTED", img);
+            return;
+        };
         ImagesColumn.prototype.addImages = function (options) {
             var num = options.cols;
             var imgs = [];
@@ -109,10 +122,10 @@ var hallmark;
         ImagesColumn.prototype.move = function (dist) {
             // if(this.speed>10 && dist<-10) return;
             // else if(this.speed<-10 && dist>10) return;
-            if (this.speed != 0 && Math.abs(dist / this.speed) > 10) {
+            /*if (this.speed != 0 && Math.abs(dist / this.speed) > 10) {
                 //console.log('jump');
-                return;
-            }
+                return
+            }*/
             this.speed = dist;
             this.first += dist;
             this.arangeImages();
@@ -140,17 +153,6 @@ var hallmark;
             }
             // this.moveImages(dist);
             /// this.stage.update();
-        };
-        ImagesColumn.prototype.moveImages = function (dist) {
-            var ar = this.images;
-            for (var i = 0; i < 3; i++) {
-                var item = ar[i];
-                item.y = item.y + dist;
-                if (item.y > this.opt.H || item.y < -this.opt.imageHeight) {
-                    this.view.removeChild(item);
-                    ar[i] = this.addChild(item.y > 0);
-                }
-            }
         };
         return ImagesColumn;
     }());

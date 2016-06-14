@@ -1,1 +1,57 @@
-﻿
+﻿#container {
+    border: 4px double #000;
+    background-color: #3c763d;
+}
+
+#shopcart, .item {
+    float:left;
+}
+
+.shopcart {
+    height: 80px;
+}
+
+#mainview {
+    border: 2px solid #000;
+
+}
+
+.clear {
+    clear: both;
+}
+
+#coupon {
+    height: 40px;
+    text-align: center;
+}
+
+#drag {
+    position: fixed;
+}
+
+img {
+    height: 100px;
+}
+
+.spin {
+    margin: 20px 0;
+    text-align: center;
+}
+#spin {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: red;
+    color: #ffffff;
+    border: 0px;
+}
+
+#shopcartitems {
+    display: none;
+}
+
+.item {
+    width: 80px;
+    text-align: center;
+}

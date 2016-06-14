@@ -1,4 +1,3 @@
-//import {ImagesLoader} from "./ImagesLoader";
 /**
  * Created by VladHome on 1/8/2016.
  */
@@ -8,6 +7,7 @@
 ///<reference path="ImagesColumn.ts"/>
 ///<reference path="ImagesLibrary.ts"/>
 ///<reference path="ImageView.ts"/>
+///<reference path="ImageDrag.ts"/>
 var hallmark;
 (function (hallmark) {
     var ImagesRowOpt = (function () {
@@ -19,6 +19,8 @@ var hallmark;
     var Gallery4 = (function () {
         function Gallery4($view, options) {
             var _this = this;
+            this.$view = $view;
+            this.drag = new hallmark.ImageDrag($view);
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
@@ -57,13 +59,24 @@ var hallmark;
                 //}
             });
         }
+        /*element = document.getElementById('spin');
+
+        element.addEventListener('click', (evt:MouseEvent)=> {
+            move (20);
+        });*/
         Gallery4.prototype.createColumn = function (options) {
+            var _this = this;
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
-                column.setPosition(i * 110 + 5, 10);
-                column.createBackground('#999999');
+                column.setPosition(i * 100 + 5, 10);
+                //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
+                //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
+                column.onImageSelected = function (img) { return _this.onImageSelected(img); };
             }
+        };
+        Gallery4.prototype.onImageSelected = function (img) {
+            this.drag.setImage(img);
         };
         return Gallery4;
     }());
@@ -79,13 +92,10 @@ var hallmark;
 $(document).ready(function () {
     console.log($(window).width() + 'x' + $(window).height());
     var width = $(window).width();
-    var height = $(window).height();
-    var cols = 5;
-    var rows = 7;
-    if (width < 500) {
-        rows = 5;
-        cols = 4;
-    }
+    var height = $(window).height() - 230;
+    $('#shopcart').click(function () {
+        $('#shopcartitems').toggle();
+    });
     var options = {
         canvasWidth: width,
         canvasHeight: height,

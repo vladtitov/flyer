@@ -1,4 +1,3 @@
-//import {ImagesLoader} from "./ImagesLoader";
 /**
  * Created by VladHome on 1/8/2016.
  */
@@ -8,9 +7,11 @@
 ///<reference path="ImagesColumn.ts"/>
 ///<reference path="ImagesLibrary.ts"/>
 ///<reference path="ImageView.ts"/>
+///<reference path="ImageDrag.ts"/>
+    
 
 
-    declare var require:any;
+declare var require:any;
 
     
 namespace hallmark{
@@ -54,12 +55,13 @@ namespace hallmark{
     export class Gallery4{
         stage:createjs.Stage;
         //data:VOImage[];
-        isWebGL:boolean
+        isWebGL:boolean;
         imagesLibrary:ImagesLibrary;
         private current:number;
         private preview:ImagePreview;
-        constructor($view, options:any){
-
+        private drag:ImageDrag;
+        constructor(private $view:JQuery, options:any){
+            this.drag = new ImageDrag ($view);
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
@@ -99,20 +101,31 @@ namespace hallmark{
                 //   count=0;
                 //}
             });
-
-
-
         }
+
+
+        /*element = document.getElementById('spin');
+
+        element.addEventListener('click', (evt:MouseEvent)=> {
+            move (20);
+        });*/
+        
         createColumn(options):void{
 
             for(var i=0; i<3; i++) {
                 var column:ImagesColumn = new ImagesColumn(this.imagesLibrary,options,i);
-                column.setPosition(i*110+5, 10);
-                column.createBackground('#999999');
+                column.setPosition(i*100+5, 10);
+                //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
+                //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
+                column.onImageSelected = (img) => this.onImageSelected(img);
             }
+
         }
 
+        private onImageSelected (img) {
+            this.drag.setImage(img);
+        }
     }
 
     interface Images{
@@ -130,19 +143,21 @@ namespace hallmark{
     }
 }
 
+
+
+
 $(document).ready(function(){
     console.log($(window ).width()+'x'+$(window ).height());
     var width  = $(window ).width();
-    var height  = $(window ).height();
+    var height  = $(window ).height()-230;
 
-    var cols = 5;
-    var rows = 7;
-    if(width<500){
-        rows=5;
-        cols=4;
-    }
+    $('#shopcart').click(function(){
+        $('#shopcartitems').toggle();
+    });
 
 
+
+    
 
     var options={
         canvasWidth:width,
@@ -164,5 +179,4 @@ $(document).ready(function(){
 
     var gal = new hallmark.App($('#mainview'),options);
 })
-
 
