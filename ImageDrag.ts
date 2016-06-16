@@ -5,6 +5,9 @@
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
 
+interface JQuery {
+    hammer ():JQuery;
+};
 
 module hallmark {
     import Point = createjs.Point;
@@ -23,8 +26,12 @@ module hallmark {
         private currentX:number;
         private currentY:number;
         private $overlay:JQuery;
+        private cart;
+
         constructor(private $view:JQuery) {
             this.$overlay = $("#overlay");
+            //this.cart = document.getElementById("shopcartitems");
+            //this.touchScroll();
     }
 
     /*private hammerInit () {
@@ -64,24 +71,47 @@ module hallmark {
         });
     }*/
 
-        addDrag ($img) {
-            $(document).on("touchmove", (evt) => this.onMouseMove (evt, $img))
-            $img.on("swiperight swipeleft", (evt) => {
+        /*touchScroll() {
+            var scrollStartPos=0;
+
+            this.cart.addEventListener("touchstart", function(event) {
+                scrollStartPos=this.scrollLeft+event.touches[0].clientX;
+                event.preventDefault();
+            },false);
+
+            this.cart.addEventListener("touchmove", function(event) {
+                console.log(this, this.scrollLeft, event.touches[0].clientX);
+                this.scrollLeft=scrollStartPos+event.touches[0].clientX;
+                event.preventDefault();
+            },false);
+        }*/
+
+        addDrag () {
+            var $img = this.$image;
+            if (!$img) return;
+            $(document).on("touchmove", (evt) => this.onMouseMove (evt));
+            $img.hammer().on("swiperight swipeleft", (evt) => {
                 this.removeDrag ();
                 if (evt.type == "swipeleft") $img.animate ({opacity: 0.1, left:0}, 1000);
                 if (evt.type == "swiperight") $img.animate ({opacity: 0.1, left:320}, 1000);
-                $img.animate ({opacity: 1}, 5);
+                $img.off("swiperight swipeleft");
                 setTimeout(()=> {
-                    this.reset ();
-                },1005);
+                    $img.remove();
+                },1500);
             });
-        }
+            }
 
         removeDrag () {
             $(document).off("touchmove");
         }
 
-        dragOnCart ($img) {
+        dragOnCart () {
+            var $img = this.$image;
+            if (!$img) return;
+            $img.on("swipe", (evt) => {
+            $img.remove();
+            $img.off("swipe");
+        });
              if (this.currentX<100 && this.currentY>360 ) {
                  this.removeDrag ();
                  $img.animate ({opacity: 0.1, left:20, top: 450}, 1000);
@@ -101,13 +131,19 @@ module hallmark {
         }
 
         reset () {
-            this.$overlay.empty();
+            this.$image=null;
+            this.startX =0;
+            this.startY =0;
+            this.mouseStartX =0;
+            this.mouseStartY =0;
         }
 
         private mouseStartX;
         private mouseStartY;
 
-        onMouseMove (evt:any, $img) {
+        onMouseMove (evt:any) {
+            var $img = this.$image;
+            if (!$img) return;
             var touch:Touch = evt.originalEvent.touches[0];
             if (this.mouseStartX == 0) {
                 var offset = $img.offset();
@@ -122,23 +158,20 @@ module hallmark {
             this.currentX = this.startX + dX;
             this.currentY = this.startY + dY;
             $img.offset({left:this.currentX, top:this.currentY});
-            this.dragOnCart($img);
+            this.dragOnCart();
         }
 
         setImage(img:Iimage) {
-            this.reset ();
-            var $img = $(img.image);
+            this.reset();
+            var $img = $(img.image).clone(true);
+            this.$overlay.empty();
             this.$overlay.append($img);
             var off = this.$view.offset();
             off.left+=img.p.x;
             off.top+=img.p.y;
             $img.offset(off);
             this.$image = $img;
-            this.startX =0;
-            this.startY =0;
-            this.mouseStartX =0;
-            this.mouseStartY =0;
-            this.addDrag ($img);
+            this.addDrag ();
          }
     }
 }

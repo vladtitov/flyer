@@ -3,7 +3,7 @@
     background-color: #3c763d;
 }
 
-#shopcart, .item {
+#shopcart {
     float:left;
 }
 
@@ -57,9 +57,7 @@ button {
 }
 
 .item {
-     margin: 0 5px;
-}
-.item {
+    margin: 0 5px;
     height: 90px;
 }
 
