@@ -116,7 +116,6 @@
   
         private loadData(url:string):void{
             $.get(url).done((res)=>{
-                //console.log(res);
                 //this.images.resolve(res);
                 var out:ImageHolder[]=[];
                 var size = this.options.thumbSize;

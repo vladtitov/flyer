@@ -6,6 +6,7 @@
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="Gallery4.ts"/>
 ///<reference path="ImagesLibrary.ts"/>
+///<reference path="TouchControler.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;
@@ -17,59 +18,32 @@ var hallmark;
             this.opt = opt;
             this.id = id;
             this.images = [];
-            this.speed = 0;
             this.dist = opt.thumbDistance;
             var cont = new Container();
             cont.name = 'column_' + id;
+            this.touchControler = new hallmark.TouchControler(cont);
+            this.touchControler.onPressHold = function (evt) { return _this.onPressHold(evt); };
+            this.touchControler.move = function (evt) { return _this.move(evt); };
             this.view = cont;
             this.first = 0;
             this.addImages(opt);
             var prev = 0;
             var pressStart;
-            this.view.addEventListener('mousedown', function (evt) {
-                _this.isMove = false;
-                _this.pointerid = evt.pointerID;
-                prev = evt.stageY;
-                pressStart = evt.stageY;
-                if (Math.abs(_this.speed) > 5)
-                    pressStart = 0;
-                _this.speed = 0;
-                clearTimeout(_this.holdTimer);
-                _this.holdTimer = setTimeout(function () { return _this.onPressHold(evt); }, 1000);
-            });
-            this.view.addEventListener('mouseup', function (evt) {
-                if (pressStart !== 0 && Math.abs(pressStart - evt.stageY) < 6) {
-                    if (ImagesColumn.onImageClick)
-                        ImagesColumn.onImageClick(evt.target);
-                }
-                _this.pointerid = -1;
-                var self = _this;
-                if (Math.abs(_this.speed) > 5) {
-                    _this.isMove = true;
-                }
-            });
-            /*this.view.addEventListener('pressmove',(evt:MouseEvent)=>{
-                 if(evt.pointerID!==this.pointerid) return;
-                 var now:number = evt.stageY;
-                 var d:number = now - prev;
-                 prev=now;
-                 this.move(d);
-             });*/
             var self = this;
             var count = 0;
             var stamp = Date.now();
             createjs.Ticker.addEventListener("tick", function () {
-                if (_this.isMove) {
-                    var speed = Math.abs(_this.speed);
+                if (_this.touchControler.isMove) {
+                    var speed = Math.abs(_this.touchControler.speed);
                     if (speed > 5 && speed < 20)
                         _this.friction = 0.995;
                     else
                         _this.friction = 0.95;
-                    _this.speed *= _this.friction;
+                    _this.touchControler.speed *= _this.friction;
                     if (speed < 1)
-                        _this.isMove = false;
+                        _this.touchControler.isMove = false;
                     // console.log(this.speed);
-                    self.move(_this.speed);
+                    self.move(_this.touchControler.speed);
                 }
             });
         }
@@ -84,7 +58,6 @@ var hallmark;
             img.p = p;
             img.image = evt.target.image;
             this.onImageSelected(img);
-            //this.view.dispatchEvent("IMAGE_SELECTED", img);
             return;
         };
         ImagesColumn.prototype.addImages = function (options) {
@@ -106,6 +79,7 @@ var hallmark;
             this.view.x = x;
             this.view.y = y;
         };
+        //private isMove:boolean;
         ImagesColumn.prototype.addChild = function (onStart) {
             var bmp = this.lib.getNext();
             bmp.y = onStart ? 0 : this.opt.W;
@@ -126,7 +100,7 @@ var hallmark;
                 //console.log('jump');
                 return
             }*/
-            this.speed = dist;
+            this.touchControler.speed = dist;
             this.first += dist;
             this.arangeImages();
             //console.log(this.first, this.dist);

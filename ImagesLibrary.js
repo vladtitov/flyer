@@ -88,7 +88,6 @@ var hallmark;
         ImagesLibrary.prototype.loadData = function (url) {
             var _this = this;
             $.get(url).done(function (res) {
-                //console.log(res);
                 //this.images.resolve(res);
                 var out = [];
                 var size = _this.options.thumbSize;

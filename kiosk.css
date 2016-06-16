@@ -7,8 +7,14 @@
     float:left;
 }
 
-.shopcart {
-    height: 80px;
+button {
+    padding: 0;
+    border: 0;
+    margin: 0 5px;
+}
+
+#shopcart_container {
+    height: 100px;
 }
 
 #mainview {
@@ -25,16 +31,12 @@
     text-align: center;
 }
 
-#drag {
-    position: fixed;
-}
-
-img {
+#overlay img {
     height: 100px;
 }
 
 .spin {
-    margin: 20px 0;
+    margin: 10px 0;
     text-align: center;
 }
 #spin {
@@ -48,10 +50,21 @@ img {
 }
 
 #shopcartitems {
+    width: 210px;
+    height: 90px;
+    overflow: hidden;
     display: none;
 }
 
 .item {
-    width: 80px;
-    text-align: center;
+     margin: 0 5px;
+}
+.item img{
+    height: 90px;
+}
+
+#overlay {
+    position: fixed;
+    top:0;
+    left:0;
 }

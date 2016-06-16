@@ -13,58 +13,41 @@
     <link href="kiosk.css" rel="stylesheet" />
     <link href="libs/font-awesome.css" rel="stylesheet" type="text/css"/>
     <script src="libs/jquery-2.1.0.min.js"></script>
+    <script src="libs/jquery.mobile-1.4.5.min.js"></script>
+    <script src="libs/createjs.min.js"></script>
     <script src="libs/underscore-min.js"></script>
     <script src="libs/svgjs.js"></script>
-    <script src="libs/hammer.min.js"></script>
 
     <!--<script src="js/kiosk/Kiosk.js"></script>-->
     <!--<link href="css/kiosk1920.css" rel="stylesheet" />-->
 
 </head>
 <body>
-<div id="Templates" class="hidden"> </div>
-<div id="container">
-    <div id="coupon">
-                    coupon
-    </div>
-    <div id="slots">
-        <section id="mainview" >
+    <div id="Templates" class="hidden"> </div>
+    <div id="container">
+        <div id="coupon">
 
-        </section>
-        <div class="spin">
-                <button id="spin" name="spin">SPIN</button>
         </div>
-    </div>
-    <div class="shopcart">
-        <button id="shopcart" name="shopcart">SC</button>
-        <div id="shopcartitems">
-            <div class="item">
-                item1
-            </div>
-            <div class="item">
-                item2
-            </div>
-            <div class="item">
-                item3
+        <div id="slots">
+            <section id="mainview" >
+
+            </section>
+            <div class="spin">
+                    <button id="spin" name="spin">SPIN</button>
             </div>
         </div>
+        <div id="shopcart_container">
+            <button id="shopcart" name="shopcart"><img src="shoping.png" width="90px" height="90px"></button>
+            <div id="shopcartitems"></div>
+        </div>
     </div>
-</div>
-<div id="overlay">
-    <style>
-        #overlay {
-            position: fixed;
-            top:0;
-            left:0;
-        }
-    </style>
-</div>
-    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+    <div id="overlay"></div>
 
     <script src="ImageView.js"></script>
     <script src="ImagesLibrary.js"></script>
     <script src="ImagesColumn.js"></script>
     <script src="ImageDrag.js"></script>
+    <script src="TouchControler.js"></script>
     <script src="Gallery4.js"></script>
     <script>
         

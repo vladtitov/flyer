@@ -6,6 +6,9 @@
     /// <reference path="typings/easeljs.d.ts" />
     ///<reference path="Gallery4.ts"/>
     ///<reference path="ImagesLibrary.ts"/>
+    ///<reference path="TouchControler.ts"/>
+    
+    
 
 
     
@@ -20,15 +23,16 @@ module hallmark {
     import Container = createjs.Container;
     import Shape = createjs.Shape;
     import Point = createjs.Point;
-
+    
     export class ImagesColumn {
         images:DisplayObject[] = [];
         view:Container;
 
-        private speed:number = 0;
+        //private speed:number = 0;
         pointerid:number;
         private dist:number;
         private holdTimer:number;
+        touchControler:TouchControler;
 
         constructor(private  lib:ImagesLibrary, private opt:any, private id:number) {
             //view.setBounds(0,0,options.rowWidth,options.rowHeight);
@@ -38,6 +42,9 @@ module hallmark {
             var cont:Container = new Container();
             cont.name = 'column_' + id;
 
+            this.touchControler = new TouchControler(cont);
+            this.touchControler.onPressHold = (evt) => this.onPressHold (evt);
+            this.touchControler.move = (evt) => this.move (evt);
             this.view = cont;
             this.first = 0;
 
@@ -46,52 +53,19 @@ module hallmark {
             var prev:number = 0;
 
             var pressStart:number;
-
-            this.view.addEventListener('mousedown', (evt:MouseEvent)=> {
-                this.isMove = false;
-                this.pointerid = evt.pointerID;
-                prev = evt.stageY;
-                pressStart = evt.stageY;
-                if (Math.abs(this.speed) > 5)pressStart = 0;
-                this.speed = 0;
-                clearTimeout(this.holdTimer);
-                this.holdTimer = setTimeout(()=> this.onPressHold(evt),1000)
-            });
-
-            this.view.addEventListener('mouseup', (evt:MouseEvent)=> {
-                if (pressStart !== 0 && Math.abs(pressStart - evt.stageY) < 6) {
-                    if (ImagesColumn.onImageClick)ImagesColumn.onImageClick(evt.target)
-                }
-                this.pointerid = -1;
-                var self = this;
-                if (Math.abs(this.speed) > 5) {
-                    this.isMove = true;
-                }
-            });
-
-            /*this.view.addEventListener('pressmove',(evt:MouseEvent)=>{
-                 if(evt.pointerID!==this.pointerid) return;
-                 var now:number = evt.stageY;
-                 var d:number = now - prev;
-                 prev=now;
-                 this.move(d);
-             });*/
-
-
-            
             var self = this;
             var count = 0;
             var stamp = Date.now();
 
             createjs.Ticker.addEventListener("tick", ()=> {
-                if (this.isMove) {
-                    var speed = Math.abs(this.speed);
+                if (this.touchControler.isMove) {
+                    var speed = Math.abs(this.touchControler.speed);
                     if (speed > 5 && speed < 20) this.friction = 0.995;
                     else  this.friction = 0.95;
-                    this.speed *= this.friction;
-                    if (speed < 1) this.isMove = false;
+                    this.touchControler.speed *= this.friction;
+                    if (speed < 1) this.touchControler.isMove = false;
                     // console.log(this.speed);
-                    self.move(this.speed);
+                    self.move(this.touchControler.speed);
                 }
             });
 
@@ -112,7 +86,6 @@ module hallmark {
             img.p = p;
             img.image = evt.target.image;
             this.onImageSelected(img);
-            //this.view.dispatchEvent("IMAGE_SELECTED", img);
             return;
         }
 
@@ -140,7 +113,7 @@ module hallmark {
         }
 
         private friction:number;
-        private isMove:boolean;
+        //private isMove:boolean;
 
 
         addChild(onStart) {
@@ -168,7 +141,7 @@ module hallmark {
                 return
             }*/
 
-            this.speed = dist;
+            this.touchControler.speed = dist;
             this.first += dist;
             this.arangeImages();
             //console.log(this.first, this.dist);
