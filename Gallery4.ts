@@ -8,7 +8,8 @@
 ///<reference path="ImagesLibrary.ts"/>
 ///<reference path="ImageView.ts"/>
 ///<reference path="ImageDrag.ts"/>
-    
+///<reference path="ShopingCart.ts"/>
+
 
 
 declare var require:any;
@@ -60,8 +61,11 @@ namespace hallmark{
         private current:number;
         private preview:ImagePreview;
         private drag:ImageDrag;
+        private shopingCart:ShopingCart;
         constructor(private $view:JQuery, options:any){
             this.drag = new ImageDrag ($view);
+            this.shopingCart = new ShopingCart;
+            this.drag.trigger.on ("DRAG_ON_CART", (evt, img) => this.shopingCart.addItem(img));
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;

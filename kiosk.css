@@ -51,18 +51,40 @@ button {
 
 #shopcartitems {
     width: 210px;
-    height: 90px;
-    overflow: hidden;
-    display: none;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
-.item {
+#shopcartitems ul {
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+#shopcartitems li {
+    vertical-align: top;
     margin: 0 5px;
     height: 90px;
+    width: 90px;
+    white-space: nowrap;
+    display: inline-block;
+    text-align: center;
+}
+
+#shopcartitems li>img{
+    height: 90px;
+    position: static;
 }
 
 #overlay {
     position: fixed;
     top:0;
     left:0;
+}
+
+.trans {
+    transition: 1s;
+}
+
+.removeimage {
+    transform: translateY(100%);
 }

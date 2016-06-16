@@ -8,6 +8,7 @@
 ///<reference path="ImagesLibrary.ts"/>
 ///<reference path="ImageView.ts"/>
 ///<reference path="ImageDrag.ts"/>
+///<reference path="ShopingCart.ts"/>
 var hallmark;
 (function (hallmark) {
     var ImagesRowOpt = (function () {
@@ -21,6 +22,8 @@ var hallmark;
             var _this = this;
             this.$view = $view;
             this.drag = new hallmark.ImageDrag($view);
+            this.shopingCart = new hallmark.ShopingCart;
+            this.drag.trigger.on("DRAG_ON_CART", function (evt, img) { return _this.shopingCart.addItem(img); });
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
