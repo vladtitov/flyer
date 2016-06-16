@@ -64,10 +64,16 @@ module hallmark {
         });
     }*/
 
-        addDrag () {
-            $(document).on("touchmove", (evt) => this.onMouseMove (evt))
-            this.$image.on("swipe", (evt) => {
-                this.reset ();
+        addDrag ($img) {
+            $(document).on("touchmove", (evt) => this.onMouseMove (evt, $img))
+            $img.on("swiperight swipeleft", (evt) => {
+                this.removeDrag ();
+                if (evt.type == "swipeleft") $img.animate ({opacity: 0.1, left:0}, 1000);
+                if (evt.type == "swiperight") $img.animate ({opacity: 0.1, left:320}, 1000);
+                $img.animate ({opacity: 1}, 5);
+                setTimeout(()=> {
+                    this.reset ();
+                },1005);
             });
         }
 
@@ -75,18 +81,20 @@ module hallmark {
             $(document).off("touchmove");
         }
 
-        dragOnCart () {
+        dragOnCart ($img) {
              if (this.currentX<100 && this.currentY>360 ) {
                  this.removeDrag ();
-                 this.$image.animate ({opacity: 0.1, left:20, top: 450}, 1000);
+                 $img.animate ({opacity: 0.1, left:20, top: 450}, 1000);
                  setTimeout(()=> {
-                     this.$image.css ("position", "static");
-                     var sec = $('<div>');
-                     sec.addClass("item");
-                     $(this.$image).appendTo(sec);
-                     $('#shopcartitems').append(sec);
-                     this.$image.animate ({opacity: 1}, 2000);
+                     $img.css ("position", "static");
+                     $img.appendTo('#shopcartitems');
+                     $img.addClass("item");
+                     $img.animate ({opacity: 1}, 1000);
                      $('#shopcartitems').css("display","block");
+                     $img.on("swipe", (evt) => {
+                         $img.remove();
+                         $img.off("swipe");
+                     });
                      this.reset ();
                      },1000);
              }
@@ -99,10 +107,10 @@ module hallmark {
         private mouseStartX;
         private mouseStartY;
 
-        onMouseMove (evt:any) {
+        onMouseMove (evt:any, $img) {
             var touch:Touch = evt.originalEvent.touches[0];
             if (this.mouseStartX == 0) {
-                var offset = this.$image.offset();
+                var offset = $img.offset();
                 this.startX = offset.left;
                 this.startY = offset.top;
                 this.mouseStartX = touch.clientX;
@@ -113,8 +121,8 @@ module hallmark {
             var dY = touch.clientY - this.mouseStartY;
             this.currentX = this.startX + dX;
             this.currentY = this.startY + dY;
-            this.$image.offset({left:this.currentX, top:this.currentY});
-            this.dragOnCart();
+            $img.offset({left:this.currentX, top:this.currentY});
+            this.dragOnCart($img);
         }
 
         setImage(img:Iimage) {
@@ -130,7 +138,7 @@ module hallmark {
             this.startY =0;
             this.mouseStartX =0;
             this.mouseStartY =0;
-            this.addDrag ();
+            this.addDrag ($img);
          }
     }
 }
