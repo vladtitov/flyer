@@ -21,6 +21,7 @@ var hallmark;
             $(document).on("touchmove", function (evt) { return _this.onMouseMove(evt); });
             $img.hammer().on("swiperight swipeleft", function (evt) {
                 _this.removeDrag();
+                console.log(evt.type);
                 if (evt.type == "swipeleft")
                     $img.animate({ opacity: 0.1, left: 0 }, 1000);
                 if (evt.type == "swiperight")
@@ -71,8 +72,6 @@ var hallmark;
             }
         };
         ImageDrag.prototype.setImage = function (img) {
-            $('#shopcartitems').css("display", "block");
-            $('#spin').css("display", "none");
             this.reset();
             var $img = $(img.image).clone();
             this.$overlay.empty();
