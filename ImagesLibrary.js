@@ -15,6 +15,12 @@ var hallmark;
     var Bitmap = createjs.Bitmap;
     var Container = createjs.Container;
     var Shape = createjs.Shape;
+    var ImageModel = (function () {
+        function ImageModel() {
+        }
+        return ImageModel;
+    }());
+    hallmark.ImageModel = ImageModel;
     var ImageHolder = (function (_super) {
         __extends(ImageHolder, _super);
         function ImageHolder(vo, size) {
@@ -50,7 +56,7 @@ var hallmark;
                 // cont.addChild(txt);
                 // this.addChild(cont);
                 _this.cache(0, 0, size, size);
-                ImagesLibrary.dispatcher.triggerHandler("IMAGE_LOADED");
+                ImagesLibrary.trigger.triggerHandler("IMAGE_LOADED");
             };
             // var cont:Container = new Container();
             var sh = new Shape();
@@ -148,7 +154,7 @@ var hallmark;
             return out;
         };
         //static onImageLoaded:Function;
-        ImagesLibrary.dispatcher = $({});
+        ImagesLibrary.trigger = $({});
         return ImagesLibrary;
     }());
     hallmark.ImagesLibrary = ImagesLibrary;

@@ -7,6 +7,7 @@ var hallmark;
     var TouchControler = (function () {
         function TouchControler(view) {
             this.view = view;
+            this.trigger = $({});
             this.init();
         }
         TouchControler.prototype.init = function () {
@@ -14,6 +15,7 @@ var hallmark;
             this.view.addEventListener('mousedown', function (evt) {
                 _this.isMove = false;
                 _this.isHold = false;
+                console.log('mousedowm');
                 _this.pointerid = evt.pointerID;
                 _this.prev = evt.stageY;
                 _this.pressStart = evt.stageY;
@@ -29,10 +31,11 @@ var hallmark;
             this.view.addEventListener('pressup', function (evt) {
                 if (_this.isHold)
                     return;
-                clearTimeout(_this.holdTimer);
+                if (_this.holdTimer !== 0) {
+                    clearTimeout(_this.holdTimer);
+                    _this.holdTimer = 0;
+                }
                 if (_this.pressStart !== 0 && Math.abs(_this.pressStart - evt.stageY) < 6) {
-                    if (hallmark.ImagesColumn.onImageClick)
-                        hallmark.ImagesColumn.onImageClick(evt.target);
                 }
                 _this.pointerid = -1;
                 var self = _this;
@@ -43,19 +46,27 @@ var hallmark;
             this.view.addEventListener('pressmove', function (evt) {
                 if (_this.isHold)
                     return;
-                clearTimeout(_this.holdTimer);
                 if (evt.pointerID !== _this.pointerid)
                     return;
                 var now = evt.stageY;
                 var d = now - _this.prev;
                 _this.prev = now;
-                _this.move(d);
+                if (d !== 0) {
+                    _this.resetHold();
+                    _this.move(d);
+                }
             });
+        };
+        TouchControler.prototype.resetHold = function () {
+            if (this.holdTimer !== 0) {
+                clearTimeout(this.holdTimer);
+                this.holdTimer = 0;
+            }
         };
         TouchControler.prototype.move = function (d) {
         };
         TouchControler.prototype.onPressHold = function (evt) {
-            //this.view.dispatchEvent(TouchControler.PRESS_HOLD);
+            this.trigger.triggerHandler(TouchControler.PRESS_HOLD, evt.target);
         };
         TouchControler.PRESS_HOLD = "PRESS_HOLD";
         return TouchControler;

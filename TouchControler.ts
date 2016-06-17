@@ -9,7 +9,12 @@ module hallmark {
 
 import Container = createjs.Container;
         import Touch = createjs.Touch;
+
+
+
         export class TouchControler {
+
+            trigger:JQuery = $({});
         private prev:number;
         private pressStart:number;
         private pointerid:number;
@@ -18,6 +23,7 @@ import Container = createjs.Container;
         private holdTimer:number;
         static PRESS_HOLD:string = "PRESS_HOLD";
         isHold:boolean;
+            target
 
     constructor (private view:Container){
         this.init();
@@ -27,6 +33,7 @@ import Container = createjs.Container;
         this.view.addEventListener('mousedown', (evt:any)=> {
             this.isMove = false;
             this.isHold = false;
+            console.log('mousedowm');
             this.pointerid = evt.pointerID;
             this.prev = evt.stageY;
             this.pressStart = evt.stageY;
@@ -41,9 +48,12 @@ import Container = createjs.Container;
 
         this.view.addEventListener('pressup', (evt:any)=> {
             if (this.isHold) return;
-            clearTimeout(this.holdTimer);
+            if(this.holdTimer !==0){
+                clearTimeout(this.holdTimer);
+                this.holdTimer=0;
+            }
             if (this.pressStart !== 0 && Math.abs(this.pressStart - evt.stageY) < 6) {
-                if (ImagesColumn.onImageClick)ImagesColumn.onImageClick(evt.target)
+                //if (ImagesColumn.onImageClick)ImagesColumn.onImageClick(evt.target)
             }
             this.pointerid = -1;
             var self = this;
@@ -54,21 +64,30 @@ import Container = createjs.Container;
 
         this.view.addEventListener('pressmove', (evt:any)=> {
             if (this.isHold) return;
-            clearTimeout(this.holdTimer);
             if (evt.pointerID !== this.pointerid) return;
             var now:number = evt.stageY;
             var d:number = now - this.prev;
             this.prev = now;
-            this.move(d);
+            if(d!==0){
+                this.resetHold();
+                this.move(d);
+            }
         });
     }
 
+
+            private resetHold():void{
+                if(this.holdTimer !==0){
+                    clearTimeout(this.holdTimer);
+                    this.holdTimer=0;
+                }
+            }
     public move (d:number) {
 
     }
 
     onPressHold (evt) {
-        //this.view.dispatchEvent(TouchControler.PRESS_HOLD);
+      this.trigger.triggerHandler(TouchControler.PRESS_HOLD,evt.target);
 
     }
 }

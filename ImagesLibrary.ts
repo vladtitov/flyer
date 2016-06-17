@@ -24,11 +24,17 @@
         price: number,
         sale: boolean,
         thumb: string
+        id:number;
+    }
+
+    export class ImageModel{
+        
     }
 
     interface ImageThumb extends VOImage {
         categories: number []
     }
+
 
     export class ImageHolder extends Container implements ImageThumb {
         cats: string;
@@ -72,7 +78,7 @@
 
                 this.cache(0, 0, size, size);
 
-               ImagesLibrary.dispatcher.triggerHandler ("IMAGE_LOADED");
+               ImagesLibrary.trigger.triggerHandler ("IMAGE_LOADED");
             }
 
             // var cont:Container = new Container();
@@ -103,7 +109,7 @@
 
     export class ImagesLibrary {
         //static onImageLoaded:Function;
-        static dispatcher:JQuery = $({});
+        static trigger:JQuery = $({});
         data:ImageHolder[];
         private price1:Bitmap;
         private price2:Bitmap;

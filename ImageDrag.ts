@@ -27,44 +27,65 @@ module hallmark {
         private currentY:number;
         private $overlay:JQuery;
         trigger:JQuery = $({});
+        private hammer:HammerManager;
 
         constructor(private $view:JQuery) {
             this.$overlay = $("#overlay");
         }
 
-        addDrag () {
+        addSwipes():void{
             var $img = this.$image;
-            if (!$img) return;
-            $(document).on("touchmove", (evt) => this.onMouseMove (evt));
-            $img.hammer().on("swiperight swipeleft", (evt) => {
-                this.removeDrag ();
-                console.log(evt.type);
-                if (evt.type == "swipeleft") $img.animate ({opacity: 0.1, left:0}, 1000);
-                if (evt.type == "swiperight") $img.animate ({opacity: 0.1, left:320}, 1000);
-                $img.hammer().off("swiperight swipeleft");
-                setTimeout(()=> {
-                    $img.remove();
+            if(!$img) return;
+            this.hammer = new Hammer($img.get(0));
+            this.hammer.on("swiperight swipeleft", (evt) => {
+                this.hammer.off("swiperight swipeleft");
+                var x:number = $img.offset().left -100;
+                if(evt.type == "swiperight") x += 200;
+                $img.animate ({opacity: 0.1,left:x});
+               setTimeout(()=> {
+                   $img.remove();
                 },1500);
             });
         }
 
-        removeDrag () {
-            $(document).off("touchmove");
+        addDrag () {
+            var $img = this.$image;
+            if (!$img) return;
+            this.reset();
+            $(document).on("touchmove", (evt) => this.onMouseMove (evt));
+            $(document).on("touchend touchcancel", (evt) => {
+                $(document).off("touchmove touchend touchcancel");
+                $img.on('touchstart',(evt)=>this.addDrag())
+                this.addSwipes();
+            });
         }
-
         dragOnCart () {
             var $img = this.$image;
-            $img.hammer().off("swiperight swipeleft");
+            this.hammer.off("swiperight swipeleft");
+            $(document).off("touchmove touchend touchcancel");
             this.trigger.triggerHandler("DRAG_ON_CART", $img);
             this.reset();
         }
+        removeListeners():void{
+
+        }
 
         reset () {
-            this.$image=null;
             this.startX =0;
             this.startY =0;
             this.mouseStartX =0;
             this.mouseStartY =0;
+        }
+
+        clear():void{
+            this.reset();
+            if(this.$image){
+                var $im = this.$image;
+                $im.animate ({opacity: 0.1}, 500,function () {
+                    $im.remove();
+                });
+
+            }
         }
 
         private mouseStartX;
@@ -88,21 +109,20 @@ module hallmark {
             this.currentY = this.startY + dY;
             $img.offset({left: this.currentX, top: this.currentY});
             if (this.currentX < 100 && this.currentY > 360) {
-                this.removeDrag();
                 this.dragOnCart();
             }
         }
 
-        setImage(img:Iimage) {
-            this.reset();
-            var $img = $(img.image).clone();
-            this.$overlay.empty();
+        setImage($img:JQuery) {
+            this.clear();
+
             this.$overlay.append($img);
             var off = this.$view.offset();
-            off.left+=img.p.x;
-            off.top+=img.p.y;
+            off.left+=$img.data('x');
+            off.top+=$img.data('y');
             $img.offset(off);
             this.$image = $img;
+
             this.addDrag ();
          }
     }

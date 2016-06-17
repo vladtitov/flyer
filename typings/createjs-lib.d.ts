@@ -18,7 +18,7 @@
 
 declare module createjs {
     export class Event {
-        constructor(type: string, bubbles: boolean, cancelable: boolean);
+        constructor(type: string, bubbles?: boolean, cancelable?: boolean);
 
         // properties
         bubbles: boolean;

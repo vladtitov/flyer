@@ -74,18 +74,18 @@ namespace hallmark{
             //this.data = data;
             this.imagesLibrary = new ImagesLibrary(options);
             var count = 0;
-            ImagesLibrary.dispatcher.on ("IMAGE_LOADED", () => {
+            ImagesLibrary.trigger.on ("IMAGE_LOADED", () => {
                if (count++ >50) {
-                   ImagesLibrary.dispatcher.off ("IMAGE_LOADED");
+                   ImagesLibrary.trigger.off ("IMAGE_LOADED");
                    this.createColumn(options);
                };
             });
   
-            ImagesColumn.onImageClick = (DO:DisplayObject)=>{
+           /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
                 var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
                 if(img) this.preview.showImage(DO,img);
                 this.stage.addChild(this.preview.view);
-            }
+            }*/
 
             this.preview = new ImagePreview(options);
 
@@ -116,19 +116,23 @@ namespace hallmark{
         
         createColumn(options):void{
 
+            //createjs.EventDispatcher.initialize(ImagesColumn.prototype);
             for(var i=0; i<3; i++) {
                 var column:ImagesColumn = new ImagesColumn(this.imagesLibrary,options,i);
                 column.setPosition(i*100+5, 10);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
+               column.addEventListener('IMAGE_SELECTED', (evt:any)=> this.onImageSelected(evt))
                 //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
-                column.onImageSelected = (img) => this.onImageSelected(img);
+               // column.onImageSelected = (img) => this.onImageSelected(img);
+
             }
 
         }
 
-        private onImageSelected (img) {
-            this.drag.setImage(img);
+        private onImageSelected (evt:createjs.Event) {     
+            
+           this.drag.setImage(evt.data);
         }
     }
 

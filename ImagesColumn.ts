@@ -23,8 +23,9 @@ module hallmark {
     import Container = createjs.Container;
     import Shape = createjs.Shape;
     import Point = createjs.Point;
+    import EventDispatcher = createjs.EventDispatcher;
     
-    export class ImagesColumn {
+    export class ImagesColumn extends EventDispatcher{
         images:DisplayObject[] = [];
         view:Container;
 
@@ -35,6 +36,7 @@ module hallmark {
         touchControler:TouchControler;
 
         constructor(private  lib:ImagesLibrary, private opt:any, private id:number) {
+            super();
             //view.setBounds(0,0,options.rowWidth,options.rowHeight);
 
             this.dist = opt.thumbDistance;
@@ -43,7 +45,7 @@ module hallmark {
             cont.name = 'column_' + id;
 
             this.touchControler = new TouchControler(cont);
-            this.touchControler.onPressHold = (evt) => this.onPressHold (evt);
+            this.touchControler.trigger.on(TouchControler.PRESS_HOLD,(evt,data) => this.onPressHold (data))
             this.touchControler.move = (evt) => this.move (evt);
             this.view = cont;
             this.first = 0;
@@ -72,21 +74,19 @@ module hallmark {
 
         }
 
-        static onImageClick:Function;
+      //  static onImageClick:Function;
 
-        public onImageSelected (img) {
-            
-        };
-        
-        private onPressHold (evt:MouseEvent) {
-            var DO:DisplayObject = < DisplayObject > evt.target;
-            var stage:Stage = this.view.stage;
+
+        private onPressHold (data) {
+            var DO:DisplayObject = < DisplayObject >data;
             var p:Point = DO.localToGlobal(DO.x, DO.y);
-            var img:any = {};
-            img.p = p;
-            img.image = evt.target.image;
-            this.onImageSelected(img);
-            return;
+            var im:JQuery = $(data.image).clone();
+            im.data('id',data.id);
+            im.data('x',p.x);
+            im.data('y',p.y);
+            var e:createjs.Event = new createjs.Event('IMAGE_SELECTED');
+            e.data = im;
+            this.dispatchEvent(e)
         }
 
         private addImages(options):void {

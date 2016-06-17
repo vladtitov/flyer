@@ -32,19 +32,18 @@ var hallmark;
             //this.data = data;
             this.imagesLibrary = new hallmark.ImagesLibrary(options);
             var count = 0;
-            hallmark.ImagesLibrary.dispatcher.on("IMAGE_LOADED", function () {
+            hallmark.ImagesLibrary.trigger.on("IMAGE_LOADED", function () {
                 if (count++ > 50) {
-                    hallmark.ImagesLibrary.dispatcher.off("IMAGE_LOADED");
+                    hallmark.ImagesLibrary.trigger.off("IMAGE_LOADED");
                     _this.createColumn(options);
                 }
                 ;
             });
-            hallmark.ImagesColumn.onImageClick = function (DO) {
-                var img = _this.imagesLibrary.getImageByReference(DO);
-                if (img)
-                    _this.preview.showImage(DO, img);
-                _this.stage.addChild(_this.preview.view);
-            };
+            /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
+                 var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
+                 if(img) this.preview.showImage(DO,img);
+                 this.stage.addChild(this.preview.view);
+             }*/
             this.preview = new hallmark.ImagePreview(options);
             createjs.Touch.enable(this.stage);
             createjs.Ticker.framerate = 60;
@@ -69,17 +68,17 @@ var hallmark;
         });*/
         Gallery4.prototype.createColumn = function (options) {
             var _this = this;
+            //createjs.EventDispatcher.initialize(ImagesColumn.prototype);
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
                 column.setPosition(i * 100 + 5, 10);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
-                //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
-                column.onImageSelected = function (img) { return _this.onImageSelected(img); };
+                column.addEventListener('IMAGE_SELECTED', function (evt) { return _this.onImageSelected(evt); });
             }
         };
-        Gallery4.prototype.onImageSelected = function (img) {
-            this.drag.setImage(img);
+        Gallery4.prototype.onImageSelected = function (evt) {
+            this.drag.setImage(evt.data);
         };
         return Gallery4;
     }());

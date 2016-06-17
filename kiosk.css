@@ -33,6 +33,7 @@ button {
 
 #overlay img {
     height: 100px;
+    position: absolute;
 }
 
 .spin {
