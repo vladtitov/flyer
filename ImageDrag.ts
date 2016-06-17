@@ -38,7 +38,6 @@ module hallmark {
             $(document).on("touchmove", (evt) => this.onMouseMove (evt));
             $img.hammer().on("swiperight swipeleft", (evt) => {
                 this.removeDrag ();
-                console.log(evt.type);
                 if (evt.type == "swipeleft") $img.animate ({opacity: 0.1, left:0}, 1000);
                 if (evt.type == "swiperight") $img.animate ({opacity: 0.1, left:320}, 1000);
                 $img.hammer().off("swiperight swipeleft");
@@ -94,6 +93,8 @@ module hallmark {
         }
 
         setImage(img:Iimage) {
+            $('#shopcartitems').css("display","block");
+            $('#spin').css("display","none");
             this.reset();
             var $img = $(img.image).clone();
             this.$overlay.empty();

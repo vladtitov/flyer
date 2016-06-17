@@ -23,7 +23,6 @@ module hallmark {
             cont.hide();
             cont.show("slow");
             var offset = this.$list.offset();
-            console.log(offset);
             $img.addClass("trans");
             $img.offset(offset);
             setTimeout( () => {
