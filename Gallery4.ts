@@ -161,6 +161,7 @@ $(document).ready(function(){
 
     $('#shopcart').click(function(){
         $('#shopcartitems').toggle();
+        $('#spin').toggle();
     });
 
 

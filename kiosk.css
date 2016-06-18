@@ -14,6 +14,7 @@ button {
 }
 
 #shopcart_container {
+    margin-top: 10px;
     height: 100px;
 }
 
@@ -27,8 +28,12 @@ button {
 }
 
 #coupon {
-    height: 40px;
-    text-align: center;
+    margin: 5px 0;
+    height: 90px;
+    background-image: url("coupon.jpg");
+    background-repeat: no-repeat;
+    background-size: auto 100px;
+    background-position: center;
 }
 
 #overlay img {
@@ -37,23 +42,24 @@ button {
 }
 
 .spin {
-    margin: 10px 0;
     text-align: center;
 }
+
 #spin {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background-color: red;
     color: #ffffff;
     border: 0px;
+    margin-top: 10px;
 }
 
 #shopcartitems {
     width: 210px;
     overflow-x: auto;
     overflow-y: hidden;
+    display: none;
 }
 
 #shopcartitems ul {
@@ -61,7 +67,7 @@ button {
     white-space: nowrap;
 }
 
-#shopcartitems li {
+#shopcartitems ul li {
     vertical-align: top;
     margin: 0 5px;
     height: 90px;
@@ -71,9 +77,8 @@ button {
     text-align: center;
 }
 
-#shopcartitems li>img{
+#shopinglist li>img{
     height: 90px;
-    position: static;
 }
 
 #overlay {

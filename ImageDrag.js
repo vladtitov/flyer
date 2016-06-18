@@ -13,59 +13,39 @@ var hallmark;
             this.trigger = $({});
             this.$overlay = $("#overlay");
         }
-        ImageDrag.prototype.addSwipes = function () {
-            var _this = this;
-            var $img = this.$image;
-            if (!$img)
-                return;
-            this.hammer = new Hammer($img.get(0));
-            this.hammer.on("swiperight swipeleft", function (evt) {
-                _this.hammer.off("swiperight swipeleft");
-                var x = $img.offset().left - 100;
-                if (evt.type == "swiperight")
-                    x += 200;
-                $img.animate({ opacity: 0.1, left: x });
-                setTimeout(function () {
-                    $img.remove();
-                }, 1500);
-            });
-        };
         ImageDrag.prototype.addDrag = function () {
             var _this = this;
             var $img = this.$image;
             if (!$img)
                 return;
-            this.reset();
             $(document).on("touchmove", function (evt) { return _this.onMouseMove(evt); });
-            $(document).on("touchend touchcancel", function (evt) {
-                $(document).off("touchmove touchend touchcancel");
-                $img.on('touchstart', function (evt) { return _this.addDrag(); });
-                _this.addSwipes();
+            $img.hammer().on("swiperight swipeleft", function (evt) {
+                _this.removeDrag();
+                if (evt.type == "swipeleft")
+                    $img.animate({ opacity: 0.1, left: 0 }, 1000);
+                if (evt.type == "swiperight")
+                    $img.animate({ opacity: 0.1, left: 320 }, 1000);
+                $img.hammer().off("swiperight swipeleft");
+                setTimeout(function () {
+                    $img.remove();
+                }, 1500);
             });
+        };
+        ImageDrag.prototype.removeDrag = function () {
+            $(document).off("touchmove");
         };
         ImageDrag.prototype.dragOnCart = function () {
             var $img = this.$image;
-            this.hammer.off("swiperight swipeleft");
-            $(document).off("touchmove touchend touchcancel");
+            $img.hammer().off("swiperight swipeleft");
             this.trigger.triggerHandler("DRAG_ON_CART", $img);
             this.reset();
         };
-        ImageDrag.prototype.removeListeners = function () {
-        };
         ImageDrag.prototype.reset = function () {
+            this.$image = null;
             this.startX = 0;
             this.startY = 0;
             this.mouseStartX = 0;
             this.mouseStartY = 0;
-        };
-        ImageDrag.prototype.clear = function () {
-            this.reset();
-            if (this.$image) {
-                var $im = this.$image;
-                $im.animate({ opacity: 0.1 }, 500, function () {
-                    $im.remove();
-                });
-            }
         };
         ImageDrag.prototype.onMouseMove = function (evt) {
             var $img = this.$image;
@@ -86,15 +66,20 @@ var hallmark;
             this.currentY = this.startY + dY;
             $img.offset({ left: this.currentX, top: this.currentY });
             if (this.currentX < 100 && this.currentY > 360) {
+                this.removeDrag();
                 this.dragOnCart();
             }
         };
-        ImageDrag.prototype.setImage = function ($img) {
-            this.clear();
+        ImageDrag.prototype.setImage = function (img) {
+            $('#shopcartitems').css("display", "block");
+            $('#spin').css("display", "none");
+            this.reset();
+            var $img = $(img.image).clone();
+            this.$overlay.empty();
             this.$overlay.append($img);
             var off = this.$view.offset();
-            off.left += $img.data('x');
-            off.top += $img.data('y');
+            off.left += img.p.x;
+            off.top += img.p.y;
             $img.offset(off);
             this.$image = $img;
             this.addDrag();

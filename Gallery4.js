@@ -97,6 +97,7 @@ $(document).ready(function () {
     var height = $(window).height() - 230;
     $('#shopcart').click(function () {
         $('#shopcartitems').toggle();
+        $('#spin').toggle();
     });
     var options = {
         canvasWidth: width,
