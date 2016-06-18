@@ -5,7 +5,7 @@
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="ImagesColumn.ts"/>
-///<reference path="ImagesLibrary.ts"/>
+///<reference path="CollectionImages.ts"/>
 ///<reference path="ImageView.ts"/>
 ///<reference path="ImageDrag.ts"/>
 ///<reference path="ShopingCart.ts"/>
@@ -57,7 +57,7 @@ namespace hallmark{
         stage:createjs.Stage;
         //data:VOImage[];
         isWebGL:boolean;
-        imagesLibrary:ImagesLibrary;
+        imagesLibrary:CollectionImages;
         private current:number;
         private preview:ImagePreview;
         private drag:ImageDrag;
@@ -72,17 +72,13 @@ namespace hallmark{
             $view.append(canv);
             this.stage = new createjs.Stage(canv);
             //this.data = data;
-            this.imagesLibrary = new ImagesLibrary(options);
-            var count = 0;
-            ImagesLibrary.trigger.on ("IMAGE_LOADED", () => {
-               if (count++ >50) {
-                   ImagesLibrary.trigger.off ("IMAGE_LOADED");
-                   this.createColumn(options);
-               };
-            });
+            this.imagesLibrary = new CollectionImages(options);
+         this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50,()=>{
+             this.createColumns(options);
+         })
   
            /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
-                var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
+                var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
                 if(img) this.preview.showImage(DO,img);
                 this.stage.addChild(this.preview.view);
             }*/
@@ -114,15 +110,15 @@ namespace hallmark{
             move (20);
         });*/
         
-        createColumn(options):void{
-
-            //createjs.EventDispatcher.initialize(ImagesColumn.prototype);
+        createColumns(options):void{
+          
             for(var i=0; i<3; i++) {
                 var column:ImagesColumn = new ImagesColumn(this.imagesLibrary,options,i);
                 column.setPosition(i*100+5, 10);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
-               column.addEventListener('IMAGE_SELECTED', (evt:any)=> this.onImageSelected(evt))
+                
+              // column.tr
                 //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
                // column.onImageSelected = (img) => this.onImageSelected(img);
 
@@ -171,7 +167,8 @@ $(document).ready(function(){
     var options={
         canvasWidth:width,
         canvasHeight:height,
-        url:'getimages.php',
+        server:'http://192.168.1.11/GitHub/flyer/',
+        getimages:'getimages.php',
         thumbSize:100,
         thumbDistance:110,
         rowHeight: height,

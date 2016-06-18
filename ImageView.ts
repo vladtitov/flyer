@@ -21,6 +21,8 @@ namespace hallmark{
     import Container = createjs.Container;
     import Shape = createjs.Shape;
     
+    
+    
     export class ImageView{
 
         onImageReady:Function;
@@ -112,7 +114,7 @@ namespace hallmark{
             this.view.parent.removeChild(this.view)
         }
 
-        showImage(DO:DisplayObject,source:ImageHolder) {
+        showImage(DO:DisplayObject,source:ModelImage) {
             this.start();
             this.view.removeAllChildren();
             DO = DO.parent;

@@ -4,9 +4,14 @@ $folders=array('ChristmasCards'=>'Christmas Crads','NFLTeam'=>'NFL Team');
 $ar = array();
 foreach($folders as $folder=>$name) $ar = array_merge($ar,getFiles($folder,$name));
 $out = new stdClass();
-$out->images = $ar;
+$out=array();
+$i=1;
+foreach($ar as $val){
+ $val->id=$i++;
+ $out[]=$val;
+}
 header('Content-Type: application/json');
-echo json_encode($ar);
+echo json_encode($out);
 
 function getFiles($folder,$name){
     $ar=array();

@@ -5,7 +5,7 @@
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="ImagesColumn.ts"/>
-///<reference path="ImagesLibrary.ts"/>
+///<reference path="CollectionImages.ts"/>
 ///<reference path="ImageView.ts"/>
 ///<reference path="ImageDrag.ts"/>
 ///<reference path="ShopingCart.ts"/>
@@ -30,17 +30,12 @@ var hallmark;
             $view.append(canv);
             this.stage = new createjs.Stage(canv);
             //this.data = data;
-            this.imagesLibrary = new hallmark.ImagesLibrary(options);
-            var count = 0;
-            hallmark.ImagesLibrary.trigger.on("IMAGE_LOADED", function () {
-                if (count++ > 50) {
-                    hallmark.ImagesLibrary.trigger.off("IMAGE_LOADED");
-                    _this.createColumn(options);
-                }
-                ;
+            this.imagesLibrary = new hallmark.CollectionImages(options);
+            this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50, function () {
+                _this.createColumns(options);
             });
             /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
-                 var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
+                 var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
                  if(img) this.preview.showImage(DO,img);
                  this.stage.addChild(this.preview.view);
              }*/
@@ -66,15 +61,12 @@ var hallmark;
         element.addEventListener('click', (evt:MouseEvent)=> {
             move (20);
         });*/
-        Gallery4.prototype.createColumn = function (options) {
-            var _this = this;
-            //createjs.EventDispatcher.initialize(ImagesColumn.prototype);
+        Gallery4.prototype.createColumns = function (options) {
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
                 column.setPosition(i * 100 + 5, 10);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
-                column.addEventListener('IMAGE_SELECTED', function (evt) { return _this.onImageSelected(evt); });
             }
         };
         Gallery4.prototype.onImageSelected = function (evt) {
@@ -102,7 +94,8 @@ $(document).ready(function () {
     var options = {
         canvasWidth: width,
         canvasHeight: height,
-        url: 'getimages.php',
+        server: 'http://192.168.1.11/GitHub/flyer/',
+        getimages: 'getimages.php',
         thumbSize: 100,
         thumbDistance: 110,
         rowHeight: height,

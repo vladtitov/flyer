@@ -23,10 +23,9 @@ module hallmark {
     import Container = createjs.Container;
     import Shape = createjs.Shape;
     import Point = createjs.Point;
-    import EventDispatcher = createjs.EventDispatcher;
     
-    export class ImagesColumn extends EventDispatcher{
-        images:DisplayObject[] = [];
+    export class ImagesColumn {
+        images:ModelImage[] = [];
         view:Container;
 
         //private speed:number = 0;
@@ -34,11 +33,11 @@ module hallmark {
         private dist:number;
         private holdTimer:number;
         touchControler:TouchControler;
+        trigger:JQuery = $({});
 
-        constructor(private  lib:ImagesLibrary, private opt:any, private id:number) {
-            super();
+        constructor(private  lib:CollectionImages, private opt:any, private id:number) {
+
             //view.setBounds(0,0,options.rowWidth,options.rowHeight);
-
             this.dist = opt.thumbDistance;
 
             var cont:Container = new Container();
@@ -78,26 +77,30 @@ module hallmark {
 
 
         private onPressHold (data) {
+            console.log(data);
             var DO:DisplayObject = < DisplayObject >data;
             var p:Point = DO.localToGlobal(DO.x, DO.y);
             var im:JQuery = $(data.image).clone();
             im.data('id',data.id);
             im.data('x',p.x);
             im.data('y',p.y);
-            var e:createjs.Event = new createjs.Event('IMAGE_SELECTED');
-            e.data = im;
-            this.dispatchEvent(e)
+           // var e:createjs.Event = new createjs.Event('IMAGE_SELECTED');
+           // e.data = im;
+           //this.trigger
         }
 
+        
         private addImages(options):void {
             var num = options.cols;
             var imgs:DisplayObject[] = [];
             for (var i = 0, n = num; i < n; i++) {
-                var bmp:DisplayObject = this.lib.getNext();
-                imgs.push(this.view.addChild(bmp));
+                var model:ModelImage = this.lib.getNext();
+                this.images.push(model);
+                this.view.addChild(model.canvasView)
+                //imgs.push(this.view.addChild(bmp));
             }
 
-            this.images = imgs;
+           // this.images = imgs;
             this.arangeImages();
         }
 
@@ -116,18 +119,18 @@ module hallmark {
         //private isMove:boolean;
 
 
-        addChild(onStart) {
+       /* addChild(onStart) {
             var bmp:DisplayObject = this.lib.getNext();
             bmp.y = onStart ? 0 : this.opt.W;
             return this.view.addChild(bmp);
-        }
+        }*/
 
         private arangeImages() {
             var first = this.first;
             var ar = this.images;
             for (var i = 0, n = ar.length; i < n; i++) {
-                var item = ar[i];
-                item.y = i * this.dist + first;
+                var item = ar[i].setY(i * this.dist + first);
+               // item.y = i * this.dist + first;
             }
         }
 
@@ -145,35 +148,31 @@ module hallmark {
             this.first += dist;
             this.arangeImages();
             //console.log(this.first, this.dist);
-            if ((this.first) < -this.dist) {
+            if ((this.first) < - this.dist) {
                 // console.log(this.first);
-                var img:DisplayObject = this.images.shift();
-                this.view.removeChild(img);
-                img = this.lib.getNext();
-                img.y = -this.dist * 1.2;
+                var img:ModelImage = this.images.shift();
+                img.removeFrom(this.view);
+                
+                img = this.lib.getNext();                
+                img.setY(-this.dist * 1.2);
                 this.images.push(img);
-                this.view.addChild(img);
+                img.appendTo(this.view);
                 this.first = this.first + this.dist;
                 // this.arangeImages();
 
             } else if (this.first > 0) {
                 //console.log(this.images.length);
-                var img:DisplayObject = this.images.pop();
-                this.view.removeChild(img);
+                var img:ModelImage = this.images.pop();
+                img.removeFrom(this.view);
                 img = this.lib.getNext();
-                img.y = this.first - this.dist;
+                img.setY(this.first - this.dist);
                 this.images.unshift(img);
-                this.view.addChild(img);
+               img.appendTo(this.view);
                 //  console.log(this.first);
                 this.first = this.first - this.dist;
                 //   console.log(this.first);
                 //  this.arangeImages();
-            }
-
-
-
-            // this.moveImages(dist);
-            /// this.stage.update();
+            }           
 
         }
 
