@@ -4,6 +4,7 @@
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
+///<reference path="ModelImage.ts"/>
 ;
 var hallmark;
 (function (hallmark) {
@@ -13,47 +14,66 @@ var hallmark;
             this.trigger = $({});
             this.$overlay = $("#overlay");
         }
-        ImageDrag.prototype.addDrag = function () {
+        ImageDrag.prototype.addSwipes = function () {
             var _this = this;
-            var $img = this.$image;
-            if (!$img)
+            if (!this.model)
                 return;
-            $(document).on("touchmove", function (evt) { return _this.onMouseMove(evt); });
-            $img.hammer().on("swiperight swipeleft", function (evt) {
-                _this.removeDrag();
-                if (evt.type == "swipeleft")
-                    $img.animate({ opacity: 0.1, left: 0 }, 1000);
+            var $img = this.model.$image;
+            this.hammer = new Hammer($img.get(0));
+            this.hammer.on("swiperight swipeleft", function (evt) {
+                _this.hammer.off("swiperight swipeleft");
+                var x = $img.offset().left - 100;
                 if (evt.type == "swiperight")
-                    $img.animate({ opacity: 0.1, left: 320 }, 1000);
-                $img.hammer().off("swiperight swipeleft");
-                setTimeout(function () {
-                    $img.remove();
-                }, 1500);
+                    x += 200;
+                $img.animate({ left: x });
+                _this.model.removeDragImage();
+                _this.reset();
             });
         };
+        ImageDrag.prototype.addDrag = function () {
+            var _this = this;
+            if (!this.model)
+                return;
+            this.resetXY();
+            var $img = this.model.$image;
+            $(document).on("touchmove", function (evt) { return _this.onMouseMove(evt); });
+            $(document).on("touchend touchcancel", function (evt) {
+                $(document).off("touchmove touchend touchcancel");
+                $img.on('touchstart', function (evt) { return _this.addDrag(); });
+                _this.addSwipes();
+            });
+        };
+        /*dragOnCart () {
+            var $img = this.model.$image;
+            this.hammer.off("swiperight swipeleft");
+            $(document).off("touchmove touchend touchcancel");
+            this.trigger.triggerHandler("DRAG_ON_CART", $img);
+            this.reset();
+        }*/
         ImageDrag.prototype.removeDrag = function () {
             $(document).off("touchmove");
         };
-        ImageDrag.prototype.dragOnCart = function () {
-            var $img = this.$image;
-            $img.hammer().off("swiperight swipeleft");
-            this.trigger.triggerHandler("DRAG_ON_CART", $img);
-            this.reset();
-        };
-        ImageDrag.prototype.reset = function () {
-            this.$image = null;
+        ImageDrag.prototype.resetXY = function () {
             this.startX = 0;
             this.startY = 0;
             this.mouseStartX = 0;
             this.mouseStartY = 0;
         };
+        ImageDrag.prototype.reset = function () {
+            this.model = null;
+            this.resetXY();
+            if (this.hammer) {
+                this.hammer.off("swiperight swipeleft");
+            }
+            $(document).off("touchmove touchend touchcancel");
+        };
         ImageDrag.prototype.onMouseMove = function (evt) {
-            var $img = this.$image;
-            if (!$img)
+            if (!this.model)
                 return;
+            var $img = this.model.$image;
             var touch = evt.originalEvent.touches[0];
             if (this.mouseStartX == 0) {
-                var offset = $img.offset();
+                var offset = this.model.offset();
                 this.startX = offset.left;
                 this.startY = offset.top;
                 this.mouseStartX = touch.clientX;
@@ -64,24 +84,19 @@ var hallmark;
             var dY = touch.clientY - this.mouseStartY;
             this.currentX = this.startX + dX;
             this.currentY = this.startY + dY;
-            $img.offset({ left: this.currentX, top: this.currentY });
-            if (this.currentX < 100 && this.currentY > 360) {
-                this.removeDrag();
-                this.dragOnCart();
-            }
+            this.model.offset({ left: this.currentX, top: this.currentY });
+            // $img.offset();
+            if (this.currentX < this.cartX && this.currentY > this.cartY)
+                this.trigger.triggerHandler('ON_CART');
         };
-        ImageDrag.prototype.setImage = function (img) {
-            $('#shopcartitems').css("display", "block");
-            $('#spin').css("display", "none");
+        ImageDrag.prototype.setImage = function (model) {
+            if (this.model)
+                this.model.removeDragImage();
             this.reset();
-            var $img = $(img.image).clone();
-            this.$overlay.empty();
-            this.$overlay.append($img);
-            var off = this.$view.offset();
-            off.left += img.p.x;
-            off.top += img.p.y;
-            $img.offset(off);
-            this.$image = $img;
+            model.setDefaultOffcet(this.$view.offset());
+            this.model = model;
+            this.$overlay.children().triggerHandler('remove_me');
+            this.model.appendToDrag(this.$overlay);
             this.addDrag();
         };
         return ImageDrag;

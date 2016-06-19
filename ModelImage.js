@@ -15,6 +15,8 @@ var hallmark;
             this.categories = vo.cats.split(",").map(Number);
             //this.name = String(vo)
             this.canvasView = new Container();
+            this.canvasView.mouseChildren = false;
+            this.canvasView.name = 'canvasView_' + this.id;
             this.loadImage();
             var sh = new Shape();
             sh.name = 'shape';
@@ -36,6 +38,31 @@ var hallmark;
         ModelImage.prototype.appendTo = function (cont) {
             cont.addChild(this.canvasView);
             return this;
+        };
+        ModelImage.prototype.removeDragImage = function () {
+            var $img = this.$image;
+            $img.fadeOut('slow', function () { $img.remove(); });
+            return this;
+        };
+        ModelImage.prototype.setDefaultOffcet = function (o) {
+            this.d_offset = o;
+        };
+        ModelImage.prototype.appendToDrag = function ($cont) {
+            var _this = this;
+            this.$image = $(this.image).clone();
+            this.$image.on('remove_me', function () { return _this.removeDragImage(); });
+            var off = this.d_offset;
+            var p = this.canvasView.localToGlobal(0, 0);
+            off.left += p.x;
+            off.top += p.y;
+            this.$image.offset(off).appendTo($cont);
+            return this;
+        };
+        ModelImage.prototype.offset = function (o) {
+            if (o)
+                return this.$image.offset(o);
+            else
+                return this.$image.offset();
         };
         ModelImage.prototype.loadImage = function () {
             var _this = this;
@@ -60,6 +87,7 @@ var hallmark;
                 _this.canvasView.cache(0, 0, size, size);
                 ModelImage.trigger.triggerHandler(ModelImage.IMAGE_LOADED);
             };
+            this.image = img;
         };
         ModelImage.trigger = $({});
         ModelImage.IMAGE_LOADED = "IMAGE_LOADED";

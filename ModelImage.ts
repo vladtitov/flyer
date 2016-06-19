@@ -8,6 +8,7 @@ module hallmark{
     
     import Container = createjs.Container;
     import Shape = createjs.Shape;
+    import Point = createjs.Point;
 
     export interface VOImage {
         cats: string,
@@ -27,11 +28,15 @@ module hallmark{
         sale: boolean;
         thumb: string;
         id:number;
+        image:HTMLImageElement;
+        $image:JQuery;
         canvasView:Container;
         static thumbSize:number;
         static trigger:JQuery = $({});
         static IMAGE_LOADED:string = "IMAGE_LOADED";
         categories: number [];
+
+
         setX(x:number):ModelImage{
             this.canvasView.x=x;
             return this;
@@ -54,14 +59,41 @@ module hallmark{
             this.categories = vo.cats.split(",").map(Number);
             //this.name = String(vo)
             this.canvasView= new Container();
-
+            this.canvasView.mouseChildren = false;
+            this.canvasView.name= 'canvasView_'+this.id;
             this.loadImage();
-
             var sh:Shape = new Shape();
             sh.name='shape'
             sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
             this.canvasView.addChild(sh);
 
+        }
+
+
+        removeDragImage():ModelImage{
+            var $img:JQuery = this.$image
+            $img.fadeOut('slow',function () { $img.remove(); });
+            return this;
+        }
+
+        private d_offset:{left:number;top:number};
+
+        setDefaultOffcet(o:{left:number;top:number}){
+            this.d_offset = o;
+        }
+        appendToDrag($cont:JQuery):ModelImage{
+            this.$image = $(this.image).clone();
+            this.$image.on('remove_me',()=>this.removeDragImage());
+            var off = this.d_offset;
+            var p:Point = this.canvasView.localToGlobal(0,0);
+            off.left+=p.x;
+            off.top+=p.y;
+            this.$image.offset(off).appendTo($cont);
+            return this;
+        }
+        offset(o?:any):any{
+            if(o) return this.$image.offset(o)
+            else return this.$image.offset();
         }
 
         loadImage():void{
@@ -86,6 +118,8 @@ module hallmark{
                 ModelImage.trigger.triggerHandler (ModelImage.IMAGE_LOADED);
 
             }
+            this.image = img;
+
         }
 
     }

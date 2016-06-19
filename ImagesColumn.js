@@ -23,7 +23,8 @@ var hallmark;
             var cont = new Container();
             cont.name = 'column_' + id;
             this.touchControler = new hallmark.TouchControler(cont);
-            this.touchControler.trigger.on(hallmark.TouchControler.PRESS_HOLD, function (evt, data) { return _this.onPressHold(data); });
+            this.touchControler.on('click', function (evt) { return _this.onClicked(evt); });
+            //  this.touchControler.trigger.on(TouchControler.PRESS_HOLD,(evt,data) => this.onPressHold (data))
             this.touchControler.move = function (evt) { return _this.move(evt); };
             this.view = cont;
             this.first = 0;
@@ -48,18 +49,25 @@ var hallmark;
                 }
             });
         }
+        ImagesColumn.prototype.on = function (event, callback) {
+            this.trigger.on(event, callback);
+        };
+        ImagesColumn.prototype.off = function (event, callback) {
+            this.trigger.off(event, callback);
+        };
         //  static onImageClick:Function;
-        ImagesColumn.prototype.onPressHold = function (data) {
-            console.log(data);
-            var DO = data;
-            var p = DO.localToGlobal(DO.x, DO.y);
-            var im = $(data.image).clone();
-            im.data('id', data.id);
-            im.data('x', p.x);
-            im.data('y', p.y);
-            // var e:createjs.Event = new createjs.Event('IMAGE_SELECTED');
-            // e.data = im;
-            //this.trigger
+        ImagesColumn.prototype.onClicked = function (evt) {
+            var model = this.getModel(evt.target);
+            if (model)
+                this.trigger.triggerHandler('selected', model);
+            else
+                console.warn(' no model for click ', evt);
+        };
+        ImagesColumn.prototype.getModel = function (cont) {
+            for (var i = 0, n = this.images.length; i < n; i++)
+                if (this.images[i].canvasView.id === cont.id)
+                    return this.images[i];
+            return null;
         };
         ImagesColumn.prototype.addImages = function (options) {
             var num = options.cols;
@@ -94,15 +102,8 @@ var hallmark;
                 var item = ar[i].setY(i * this.dist + first);
             }
         };
-        ImagesColumn.prototype.move = function (dist) {
-            // if(this.speed>10 && dist<-10) return;
-            // else if(this.speed<-10 && dist>10) return;
-            /*if (this.speed != 0 && Math.abs(dist / this.speed) > 10) {
-                //console.log('jump');
-                return
-            }*/
-            this.touchControler.speed = dist;
-            this.first += dist;
+        ImagesColumn.prototype.move = function (delta) {
+            this.first += delta;
             this.arangeImages();
             //console.log(this.first, this.dist);
             if ((this.first) < -this.dist) {

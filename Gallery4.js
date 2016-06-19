@@ -22,6 +22,9 @@ var hallmark;
             var _this = this;
             this.$view = $view;
             this.drag = new hallmark.ImageDrag($view);
+            this.drag.trigger.on('ON_CART', function () { return _this.dragedOnCart(); });
+            this.drag.cartX = 100;
+            this.drag.cartY = 300;
             this.shopingCart = new hallmark.ShopingCart;
             this.drag.trigger.on("DRAG_ON_CART", function (evt, img) { return _this.shopingCart.addItem(img); });
             var canv = document.createElement('canvas');
@@ -61,16 +64,23 @@ var hallmark;
         element.addEventListener('click', (evt:MouseEvent)=> {
             move (20);
         });*/
+        Gallery4.prototype.dragedOnCart = function () {
+            var model = this.drag.model;
+            console.log(model);
+            this.drag.reset();
+        };
         Gallery4.prototype.createColumns = function (options) {
+            var _this = this;
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
                 column.setPosition(i * 100 + 5, 10);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
+                column.on('selected', function (evt, model) { return _this.onImageSelected(model); });
             }
         };
-        Gallery4.prototype.onImageSelected = function (evt) {
-            this.drag.setImage(evt.data);
+        Gallery4.prototype.onImageSelected = function (model) {
+            this.drag.setImage(model);
         };
         return Gallery4;
     }());

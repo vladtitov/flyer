@@ -44,7 +44,9 @@ module hallmark {
             cont.name = 'column_' + id;
 
             this.touchControler = new TouchControler(cont);
-            this.touchControler.trigger.on(TouchControler.PRESS_HOLD,(evt,data) => this.onPressHold (data))
+            this.touchControler.on('click',(evt)=>this.onClicked(evt));
+
+          //  this.touchControler.trigger.on(TouchControler.PRESS_HOLD,(evt,data) => this.onPressHold (data))
             this.touchControler.move = (evt) => this.move (evt);
             this.view = cont;
             this.first = 0;
@@ -73,22 +75,26 @@ module hallmark {
 
         }
 
+        on(event:string,callback:Function):void{
+            this.trigger.on(event,callback);
+        }
+        off(event:string,callback:Function):void{
+            this.trigger.off(event,callback);
+        }
+
       //  static onImageClick:Function;
 
 
-        private onPressHold (data) {
-            console.log(data);
-            var DO:DisplayObject = < DisplayObject >data;
-            var p:Point = DO.localToGlobal(DO.x, DO.y);
-            var im:JQuery = $(data.image).clone();
-            im.data('id',data.id);
-            im.data('x',p.x);
-            im.data('y',p.y);
-           // var e:createjs.Event = new createjs.Event('IMAGE_SELECTED');
-           // e.data = im;
-           //this.trigger
+        private onClicked (evt) {
+            var model:ModelImage = this.getModel(evt.target);
+            if(model)this.trigger.triggerHandler('selected',model);
+            else console.warn(' no model for click ',evt);
         }
 
+        private getModel(cont:Container):ModelImage{
+            for(var i = 0,n=this.images.length;i<n;i++)if(this.images[i].canvasView.id === cont.id) return this.images[i];
+        return null
+    }
         
         private addImages(options):void {
             var num = options.cols;
@@ -136,16 +142,8 @@ module hallmark {
 
         private first:number;
 
-        move(dist):void {
-            // if(this.speed>10 && dist<-10) return;
-            // else if(this.speed<-10 && dist>10) return;
-            /*if (this.speed != 0 && Math.abs(dist / this.speed) > 10) {
-                //console.log('jump');
-                return
-            }*/
-
-            this.touchControler.speed = dist;
-            this.first += dist;
+        move(delta):void {
+            this.first += delta;
             this.arangeImages();
             //console.log(this.first, this.dist);
             if ((this.first) < - this.dist) {

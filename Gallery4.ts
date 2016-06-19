@@ -64,6 +64,9 @@ namespace hallmark{
         private shopingCart:ShopingCart;
         constructor(private $view:JQuery, options:any){
             this.drag = new ImageDrag ($view);
+            this.drag.trigger.on('ON_CART',()=>this.dragedOnCart())
+            this.drag.cartX =100;
+            this.drag.cartY = 300;
             this.shopingCart = new ShopingCart;
             this.drag.trigger.on ("DRAG_ON_CART", (evt, img) => this.shopingCart.addItem(img));
             var canv = document.createElement('canvas');
@@ -73,9 +76,9 @@ namespace hallmark{
             this.stage = new createjs.Stage(canv);
             //this.data = data;
             this.imagesLibrary = new CollectionImages(options);
-         this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50,()=>{
-             this.createColumns(options);
-         })
+             this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50,()=>{
+                 this.createColumns(options);
+             })
   
            /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
                 var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
@@ -109,7 +112,12 @@ namespace hallmark{
         element.addEventListener('click', (evt:MouseEvent)=> {
             move (20);
         });*/
-        
+
+        private dragedOnCart():void{
+            var model:ModelImage = this.drag.model;
+            console.log(model);
+            this.drag.reset();
+        }
         createColumns(options):void{
           
             for(var i=0; i<3; i++) {
@@ -117,7 +125,7 @@ namespace hallmark{
                 column.setPosition(i*100+5, 10);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
-                
+                column.on('selected',(evt,model:ModelImage)=> this.onImageSelected(model))
               // column.tr
                 //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
                // column.onImageSelected = (img) => this.onImageSelected(img);
@@ -126,9 +134,8 @@ namespace hallmark{
 
         }
 
-        private onImageSelected (evt:createjs.Event) {     
-            
-           this.drag.setImage(evt.data);
+        private onImageSelected (model:ModelImage) {
+           this.drag.setImage(model);
         }
     }
 
