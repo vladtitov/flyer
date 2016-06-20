@@ -5,7 +5,6 @@
     /// <reference path="typings/tweenjs.d.ts" />
     /// <reference path="typings/easeljs.d.ts" />
     ///<reference path="Gallery4.ts"/>
-    ///<reference path="ImagesLibrary.ts"/>
     ///<reference path="TouchControler.ts"/>
     
     

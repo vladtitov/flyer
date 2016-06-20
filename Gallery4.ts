@@ -62,17 +62,21 @@ namespace hallmark{
         private preview:ImagePreview;
         private drag:ImageDrag;
         private shopingCart:ShopingCart;
-        constructor(private $view:JQuery, options:any){
-            this.drag = new ImageDrag ($view);
+        private canvasView:JQuery;
+        constructor(private options:any){
+            this.canvasView =$("#canvasview");
+            ModelImage.canvacView = this.canvasView;
+            this.drag = new ImageDrag ();
             this.drag.trigger.on('ON_CART',()=>this.dragedOnCart())
             this.drag.cartX =100;
             this.drag.cartY = 300;
             this.shopingCart = new ShopingCart;
+            this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on ("DRAG_ON_CART", (evt, img) => this.shopingCart.addItem(img));
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
-            $view.append(canv);
+            this.canvasView.append(canv);
             this.stage = new createjs.Stage(canv);
             //this.data = data;
             this.imagesLibrary = new CollectionImages(options);
@@ -118,6 +122,7 @@ namespace hallmark{
             console.log(model);
             this.drag.reset();
         }
+        
         createColumns(options):void{
           
             for(var i=0; i<3; i++) {
@@ -125,7 +130,7 @@ namespace hallmark{
                 column.setPosition(i*100+5, 10);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
-                column.on('selected',(evt,model:ModelImage)=> this.onImageSelected(model))
+                column.on('selected',(evt,model:ModelImage)=> this.onImageSelected(model));
               // column.tr
                 //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
                // column.onImageSelected = (img) => this.onImageSelected(img);
@@ -135,7 +140,8 @@ namespace hallmark{
         }
 
         private onImageSelected (model:ModelImage) {
-           this.drag.setImage(model);
+            this.shopingCart.showItem ();
+            this.drag.setImage(model);
         }
     }
 
@@ -148,8 +154,8 @@ namespace hallmark{
     export class App{
         //images:JQueryDeferred<VOImage[]>;
         gallery:Gallery4;
-        constructor($view:JQuery,opt:any){
-            this.gallery = new hallmark.Gallery4($view, opt);
+        constructor(opt:any){
+            this.gallery = new hallmark.Gallery4(opt);
         }
     }
 }
@@ -174,7 +180,7 @@ $(document).ready(function(){
     var options={
         canvasWidth:width,
         canvasHeight:height,
-        server:'http://192.168.1.11/GitHub/flyer/',
+        server:'http://192.168.0.107/GitHub/flyer/',
         getimages:'getimages.php',
         thumbSize:100,
         thumbDistance:110,
@@ -190,6 +196,6 @@ $(document).ready(function(){
         previewHeight:height-20
     }
 
-    var gal = new hallmark.App($('#mainview'),options);
+    var gal = new hallmark.App(options);
 })
 

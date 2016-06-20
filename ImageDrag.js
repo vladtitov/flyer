@@ -5,12 +5,12 @@
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
 ///<reference path="ModelImage.ts"/>
-;
+///<reference path="ShopingCart.ts"/>
 var hallmark;
 (function (hallmark) {
     var ImageDrag = (function () {
-        function ImageDrag($view) {
-            this.$view = $view;
+        //private hammer:HammerManager;
+        function ImageDrag() {
             this.trigger = $({});
             this.$overlay = $("#overlay");
         }
@@ -19,15 +19,37 @@ var hallmark;
             if (!this.model)
                 return;
             var $img = this.model.$image;
-            this.hammer = new Hammer($img.get(0));
-            this.hammer.on("swiperight swipeleft", function (evt) {
-                _this.hammer.off("swiperight swipeleft");
+            var hammer = new Hammer($img.get(0));
+            hammer.on("swiperight swipeleft", function (evt) {
+                hammer.off("swiperight swipeleft");
+                hammer.off("pinch rotate");
+                _this.model.setScale(1);
                 var x = $img.offset().left - 100;
                 if (evt.type == "swiperight")
                     x += 200;
                 $img.animate({ left: x });
                 _this.model.removeDragImage();
                 _this.reset();
+                _this.shopingCart.toggleView();
+            });
+        };
+        ImageDrag.prototype.addScaleRotate = function () {
+            var _this = this;
+            if (!this.model)
+                return;
+            var $img = this.model.$image;
+            var hammer = new Hammer.Manager($img.get(0));
+            var pinch = new Hammer.Pinch();
+            var rotate = new Hammer.Rotate();
+            pinch.recognizeWith(rotate);
+            hammer.add([pinch, rotate]);
+            hammer.on("pinch rotate", function (evt) {
+                var curScale = _this.model.getScale();
+                var scale = Math.max(1, Math.min(curScale * evt.scale, 3));
+                _this.model.setScale(scale);
+                var curRotation = _this.model.getRotation();
+                var rotation = curRotation + evt.rotation;
+                _this.model.setRotation(rotation);
             });
         };
         ImageDrag.prototype.addDrag = function () {
@@ -37,6 +59,7 @@ var hallmark;
             this.resetXY();
             var $img = this.model.$image;
             $(document).on("touchmove", function (evt) { return _this.onMouseMove(evt); });
+            this.addScaleRotate();
             $(document).on("touchend touchcancel", function (evt) {
                 $(document).off("touchmove touchend touchcancel");
                 $img.on('touchstart', function (evt) { return _this.addDrag(); });
@@ -62,9 +85,10 @@ var hallmark;
         ImageDrag.prototype.reset = function () {
             this.model = null;
             this.resetXY();
-            if (this.hammer) {
+            /*if(this.hammer){
                 this.hammer.off("swiperight swipeleft");
-            }
+
+            }*/
             $(document).off("touchmove touchend touchcancel");
         };
         ImageDrag.prototype.onMouseMove = function (evt) {
@@ -73,7 +97,7 @@ var hallmark;
             var $img = this.model.$image;
             var touch = evt.originalEvent.touches[0];
             if (this.mouseStartX == 0) {
-                var offset = this.model.offset();
+                var offset = this.model.getOffset();
                 this.startX = offset.left;
                 this.startY = offset.top;
                 this.mouseStartX = touch.clientX;
@@ -84,16 +108,15 @@ var hallmark;
             var dY = touch.clientY - this.mouseStartY;
             this.currentX = this.startX + dX;
             this.currentY = this.startY + dY;
-            this.model.offset({ left: this.currentX, top: this.currentY });
+            this.model.setOffset({ left: this.currentX, top: this.currentY });
             // $img.offset();
-            if (this.currentX < this.cartX && this.currentY > this.cartY)
-                this.trigger.triggerHandler('ON_CART');
+            //if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
         };
         ImageDrag.prototype.setImage = function (model) {
             if (this.model)
                 this.model.removeDragImage();
             this.reset();
-            model.setDefaultOffcet(this.$view.offset());
+            //model.setDefaultOffcet(this.$view.offset());
             this.model = model;
             this.$overlay.children().triggerHandler('remove_me');
             this.model.appendToDrag(this.$overlay);

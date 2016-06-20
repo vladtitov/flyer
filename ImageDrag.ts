@@ -5,11 +5,12 @@
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
 ///<reference path="ModelImage.ts"/>
+///<reference path="ShopingCart.ts"/>
 
 
 interface JQuery {
     hammer ():JQuery;
-};
+}
 
 module hallmark {
     import Point = createjs.Point;
@@ -25,16 +26,19 @@ module hallmark {
         model:ModelImage;
         private startX:number;
         private startY:number;
+        private mouseStartX;
+        private mouseStartY;
         private currentX:number;
         private currentY:number;
         private $overlay:JQuery;
         cartX:number;
         cartY:number;
         trigger:JQuery = $({});
+        shopingCart:ShopingCart;
 
-        private hammer:HammerManager;
+        //private hammer:HammerManager;
 
-        constructor(private $view:JQuery) {
+        constructor() {
             this.$overlay = $("#overlay");
         }
 
@@ -42,26 +46,53 @@ module hallmark {
             if (!this.model) return;
             var $img = this.model.$image;
 
-            this.hammer = new Hammer($img.get(0));
-            this.hammer.on("swiperight swipeleft", (evt) => {
+            var hammer = new Hammer($img.get(0));
+            hammer.on("swiperight swipeleft", (evt) => {
 
-                this.hammer.off("swiperight swipeleft");
+                hammer.off("swiperight swipeleft");
+                hammer.off("pinch rotate");
+                this.model.setScale(1);
                 var x:number = $img.offset().left -100;
                 if(evt.type == "swiperight") x += 200;
                 $img.animate ({left:x});
                 this.model.removeDragImage();
                 this.reset();
-
+                this.shopingCart.toggleView();
             });
         }
+
+        addScaleRotate():void {
+            if (!this.model) return;
+            var $img = this.model.$image;
+
+            var hammer = new Hammer.Manager ($img.get(0));
+
+            var pinch = new Hammer.Pinch();
+            var rotate = new Hammer.Rotate();
+
+            pinch.recognizeWith(rotate);
+
+            hammer.add([pinch, rotate]);
+
+            hammer.on("pinch rotate", (evt) => {
+                var curScale:number = this.model.getScale();
+                var scale = Math.max (1, Math.min (curScale * evt.scale, 3));
+                this.model.setScale(scale);
+                var curRotation:number = this.model.getRotation();
+                var rotation = curRotation + evt.rotation;
+                this.model.setRotation(rotation);
+            });
+        }
+
         addDrag () {
             if (!this.model) return;
             this.resetXY();
             var $img = this.model.$image;
             $(document).on("touchmove", (evt) => this.onMouseMove (evt));
+            this.addScaleRotate ();
             $(document).on("touchend touchcancel", (evt) => {
                 $(document).off("touchmove touchend touchcancel");
-                $img.on('touchstart',(evt)=>this.addDrag())
+                $img.on('touchstart',(evt)=>this.addDrag());
                 this.addSwipes();
             });
         }
@@ -73,6 +104,7 @@ module hallmark {
             this.trigger.triggerHandler("DRAG_ON_CART", $img);
             this.reset();
         }*/
+
         removeDrag () {
             $(document).off("touchmove");
         }
@@ -88,45 +120,43 @@ module hallmark {
         reset():void{
             this.model = null;
             this.resetXY();
-            if(this.hammer){
+            /*if(this.hammer){
                 this.hammer.off("swiperight swipeleft");
 
-            }
+            }*/
             $(document).off("touchmove touchend touchcancel");
         }
 
-        private mouseStartX;
-        private mouseStartY;
 
         onMouseMove (evt:any) {
             if (!this.model) return;
             var $img = this.model.$image;
             var touch:Touch = evt.originalEvent.touches[0];
             if (this.mouseStartX == 0) {
-               var offset = this.model.offset();
+                var offset = this.model.getOffset();
                 this.startX = offset.left;
                 this.startY = offset.top;
                 this.mouseStartX = touch.clientX;
                 this.mouseStartY = touch.clientY;
                 return;
             }
+            
             var dX = touch.clientX - this.mouseStartX;
             var dY = touch.clientY - this.mouseStartY;
             this.currentX = this.startX + dX;
             this.currentY = this.startY + dY;
-            this.model.offset({left: this.currentX, top: this.currentY});
+            this.model.setOffset({left: this.currentX, top: this.currentY});
            // $img.offset();
-            if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
+            //if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
 
         }
 
         setImage(model:ModelImage) {
             if(this.model) this.model.removeDragImage();
             this.reset();
-            model.setDefaultOffcet(this.$view.offset())
+            //model.setDefaultOffcet(this.$view.offset());
             this.model = model;
             this.$overlay.children().triggerHandler('remove_me');
-
             this.model.appendToDrag(this.$overlay);
             this.addDrag ();
          }

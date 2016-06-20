@@ -31,7 +31,6 @@ var hallmark;
             var _this = this;
             $.get(url).done(function (res) {
                 //this.images.resolve(res);
-                // console.log(res);
                 var out = [];
                 for (var i = 0, n = res.length; i < n; i++) {
                     var image = new hallmark.ModelImage(res[i]);

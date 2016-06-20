@@ -62,12 +62,11 @@ import Container = createjs.Container;
             this.prevY = this.startY;
           //  this.pressStart = evt.stageY;
            // if (Math.abs(this.speed) > 5) this.pressStart = 0;
-            this.speed = 0;
-         clearTimeout(this.clickTimer);
-            this.clickTimer = setTimeout(()=> {
+            clearTimeout(this.clickTimer);
+            if (this.speed === 0) this.clickTimer = setTimeout(()=> {
                 this.clickTimer = 0 ;
             }, 300);
-
+            this.speed = 0;
         });
 
         this.view.addEventListener('pressup', (evt:any)=> {

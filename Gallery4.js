@@ -18,19 +18,22 @@ var hallmark;
     }());
     hallmark.ImagesRowOpt = ImagesRowOpt;
     var Gallery4 = (function () {
-        function Gallery4($view, options) {
+        function Gallery4(options) {
             var _this = this;
-            this.$view = $view;
-            this.drag = new hallmark.ImageDrag($view);
+            this.options = options;
+            this.canvasView = $("#canvasview");
+            hallmark.ModelImage.canvacView = this.canvasView;
+            this.drag = new hallmark.ImageDrag();
             this.drag.trigger.on('ON_CART', function () { return _this.dragedOnCart(); });
             this.drag.cartX = 100;
             this.drag.cartY = 300;
             this.shopingCart = new hallmark.ShopingCart;
+            this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on("DRAG_ON_CART", function (evt, img) { return _this.shopingCart.addItem(img); });
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
-            $view.append(canv);
+            this.canvasView.append(canv);
             this.stage = new createjs.Stage(canv);
             //this.data = data;
             this.imagesLibrary = new hallmark.CollectionImages(options);
@@ -80,14 +83,15 @@ var hallmark;
             }
         };
         Gallery4.prototype.onImageSelected = function (model) {
+            this.shopingCart.showItem();
             this.drag.setImage(model);
         };
         return Gallery4;
     }());
     hallmark.Gallery4 = Gallery4;
     var App = (function () {
-        function App($view, opt) {
-            this.gallery = new hallmark.Gallery4($view, opt);
+        function App(opt) {
+            this.gallery = new hallmark.Gallery4(opt);
         }
         return App;
     }());
@@ -104,7 +108,7 @@ $(document).ready(function () {
     var options = {
         canvasWidth: width,
         canvasHeight: height,
-        server: 'http://192.168.1.11/GitHub/flyer/',
+        server: 'http://192.168.0.107/GitHub/flyer/',
         getimages: 'getimages.php',
         thumbSize: 100,
         thumbDistance: 110,
@@ -119,6 +123,6 @@ $(document).ready(function () {
         previewWidth: width - 20,
         previewHeight: height - 20
     };
-    var gal = new hallmark.App($('#mainview'), options);
+    var gal = new hallmark.App(options);
 });
 //# sourceMappingURL=Gallery4.js.map

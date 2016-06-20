@@ -33,11 +33,12 @@ var hallmark;
                 _this.prevY = _this.startY;
                 //  this.pressStart = evt.stageY;
                 // if (Math.abs(this.speed) > 5) this.pressStart = 0;
-                _this.speed = 0;
                 clearTimeout(_this.clickTimer);
-                _this.clickTimer = setTimeout(function () {
-                    _this.clickTimer = 0;
-                }, 300);
+                if (_this.speed === 0)
+                    _this.clickTimer = setTimeout(function () {
+                        _this.clickTimer = 0;
+                    }, 300);
+                _this.speed = 0;
             });
             this.view.addEventListener('pressup', function (evt) {
                 if (_this.isMove)

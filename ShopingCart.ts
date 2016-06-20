@@ -8,7 +8,7 @@
 
 interface JQuery {
     hammer ():JQuery;
-};
+}
 
 module hallmark {
     export class  ShopingCart {
@@ -47,24 +47,18 @@ module hallmark {
         private addPlaceHolder ():JQuery {
             return $("<li>").prependTo(this.$list);
         }
+
+        showItem () {
+            $('#shopcartitems').css("display","block");
+            $('#spin').css("display","none");
+            $('#shopcart').unbind("click");
+        }
         
-        ab () {
-            /*var $img = this.$image;
-            if (!$img) return;
-            if (this.currentX<100 && this.currentY>360 ) {
-                this.removeDrag ();
-                $img.animate ({opacity: 0.1, left:20, top: 450}, 1000);
-                $img.appendTo('#shopcartitems');
-                $img.addClass("item");
-                $img.animate ({opacity: 1}, 1000);
-                $('#shopcartitems').css("display","block");
-                $img.hammer().on("swipedown", (evt) => {
-                    console.log("SW");
-                    $img.remove();
-                    $img.off("swipedown");
-                });
-                this.reset ();
-            }*/
+        toggleView () {
+            $('#shopcart').click(function() {
+                $('#shopcartitems').toggle();
+                $('#spin').toggle();
+            });
         }
     }
 }

@@ -21,6 +21,7 @@ module hallmark{
     }
 
     export class ModelImage {
+        static canvacView:JQuery;
         cats: string;
         large: string;
         name: string;
@@ -35,7 +36,9 @@ module hallmark{
         static trigger:JQuery = $({});
         static IMAGE_LOADED:string = "IMAGE_LOADED";
         categories: number [];
-
+        private curScale:number = 1;
+        private curRotation:number = 0;
+        public curOffset: {left:number; top:number};
 
         setX(x:number):ModelImage{
             this.canvasView.x=x;
@@ -76,24 +79,43 @@ module hallmark{
             return this;
         }
 
-        private d_offset:{left:number;top:number};
-
-        setDefaultOffcet(o:{left:number;top:number}){
-            this.d_offset = o;
-        }
         appendToDrag($cont:JQuery):ModelImage{
             this.$image = $(this.image).clone();
             this.$image.on('remove_me',()=>this.removeDragImage());
-            var off = this.d_offset;
+            var off = ModelImage.canvacView.offset();
             var p:Point = this.canvasView.localToGlobal(0,0);
             off.left+=p.x;
             off.top+=p.y;
             this.$image.offset(off).appendTo($cont);
             return this;
         }
-        offset(o?:any):any{
-            if(o) return this.$image.offset(o)
-            else return this.$image.offset();
+
+        setOffset(o:{left:number; top:number}):JQuery {
+            this.curOffset = o;
+            return this.$image.offset(o)
+        }
+
+        getOffset (): {left:number; top:number} {
+            return this.$image.offset();
+        }
+
+        setScale (num:number) {
+            this.curScale = num;
+            this.$image.css ("transform", "scale("+ this.curScale +") rotate(" + this.curRotation + "deg)");
+        }
+
+        getScale ():number {
+            return this.curScale;
+        }
+
+        setRotation (num:number) {
+            console.log(num);
+            this.curRotation = num;
+            this.$image.css ("transform", "scale("+ this.curScale +") rotate(" + this.curRotation + "deg)");
+        }
+
+        getRotation ():number {
+            return this.curRotation;
         }
 
         loadImage():void{
@@ -117,7 +139,7 @@ module hallmark{
                 this.canvasView.cache(0, 0, size, size);
                 ModelImage.trigger.triggerHandler (ModelImage.IMAGE_LOADED);
 
-            }
+            };
             this.image = img;
 
         }
