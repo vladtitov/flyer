@@ -36,7 +36,7 @@ module hallmark {
         trigger:JQuery = $({});
         shopingCart:ShopingCart;
 
-        //private hammer:HammerManager;
+        private hammer:HammerManager;
 
         constructor() {
             this.$overlay = $("#overlay");
@@ -46,11 +46,11 @@ module hallmark {
             if (!this.model) return;
             var $img = this.model.$image;
 
-            var hammer = new Hammer($img.get(0));
-            hammer.on("swiperight swipeleft", (evt) => {
+            this.hammer = new Hammer($img.get(0));
+            this.hammer.on("swiperight swipeleft", (evt) => {
 
-                hammer.off("swiperight swipeleft");
-                hammer.off("pinch rotate");
+                this.hammer.off("swiperight swipeleft");
+                this.hammer.off("pinch rotate");
                 this.model.setScale(1);
                 var x:number = $img.offset().left -100;
                 if(evt.type == "swiperight") x += 200;
@@ -65,16 +65,16 @@ module hallmark {
             if (!this.model) return;
             var $img = this.model.$image;
 
-            var hammer = new Hammer.Manager ($img.get(0));
+            this.hammer = new Hammer($img.get(0));
 
             var pinch = new Hammer.Pinch();
             var rotate = new Hammer.Rotate();
 
             pinch.recognizeWith(rotate);
 
-            hammer.add([pinch, rotate]);
+            this.hammer.add([pinch, rotate]);
 
-            hammer.on("pinch rotate", (evt) => {
+            this.hammer.on("pinch rotate", (evt) => {
                 var curScale:number = this.model.getScale();
                 var scale = Math.max (1, Math.min (curScale * evt.scale, 3));
                 this.model.setScale(scale);
@@ -120,10 +120,10 @@ module hallmark {
         reset():void{
             this.model = null;
             this.resetXY();
-            /*if(this.hammer){
+            if(this.hammer){
                 this.hammer.off("swiperight swipeleft");
 
-            }*/
+            }
             $(document).off("touchmove touchend touchcancel");
         }
 

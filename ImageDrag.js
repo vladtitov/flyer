@@ -9,7 +9,6 @@
 var hallmark;
 (function (hallmark) {
     var ImageDrag = (function () {
-        //private hammer:HammerManager;
         function ImageDrag() {
             this.trigger = $({});
             this.$overlay = $("#overlay");
@@ -19,10 +18,10 @@ var hallmark;
             if (!this.model)
                 return;
             var $img = this.model.$image;
-            var hammer = new Hammer($img.get(0));
-            hammer.on("swiperight swipeleft", function (evt) {
-                hammer.off("swiperight swipeleft");
-                hammer.off("pinch rotate");
+            this.hammer = new Hammer($img.get(0));
+            this.hammer.on("swiperight swipeleft", function (evt) {
+                _this.hammer.off("swiperight swipeleft");
+                _this.hammer.off("pinch rotate");
                 _this.model.setScale(1);
                 var x = $img.offset().left - 100;
                 if (evt.type == "swiperight")
@@ -38,12 +37,12 @@ var hallmark;
             if (!this.model)
                 return;
             var $img = this.model.$image;
-            var hammer = new Hammer.Manager($img.get(0));
+            this.hammer = new Hammer($img.get(0));
             var pinch = new Hammer.Pinch();
             var rotate = new Hammer.Rotate();
             pinch.recognizeWith(rotate);
-            hammer.add([pinch, rotate]);
-            hammer.on("pinch rotate", function (evt) {
+            this.hammer.add([pinch, rotate]);
+            this.hammer.on("pinch rotate", function (evt) {
                 var curScale = _this.model.getScale();
                 var scale = Math.max(1, Math.min(curScale * evt.scale, 3));
                 _this.model.setScale(scale);
@@ -85,10 +84,9 @@ var hallmark;
         ImageDrag.prototype.reset = function () {
             this.model = null;
             this.resetXY();
-            /*if(this.hammer){
+            if (this.hammer) {
                 this.hammer.off("swiperight swipeleft");
-
-            }*/
+            }
             $(document).off("touchmove touchend touchcancel");
         };
         ImageDrag.prototype.onMouseMove = function (evt) {
