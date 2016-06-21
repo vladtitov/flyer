@@ -67,14 +67,14 @@ module hallmark{
             this.loadImage();
             var sh:Shape = new Shape();
             sh.name='shape'
-            sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
+            /*sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);*/
             this.canvasView.addChild(sh);
 
         }
 
 
         removeDragImage():ModelImage{
-            var $img:JQuery = this.$image
+            var $img:JQuery = this.$image;
             $img.fadeOut('slow',function () { $img.remove(); });
             return this;
         }

@@ -24,7 +24,7 @@ var hallmark;
             this.canvasView = $("#canvasview");
             hallmark.ModelImage.canvacView = this.canvasView;
             this.drag = new hallmark.ImageDrag();
-            this.drag.trigger.on('ON_CART', function () { return _this.dragedOnCart(); });
+            this.drag.trigger.on('ON_CART', function () { return _this.drag.dragOnCart(); });
             this.drag.cartX = 100;
             this.drag.cartY = 300;
             this.shopingCart = new hallmark.ShopingCart;
@@ -69,7 +69,6 @@ var hallmark;
         });*/
         Gallery4.prototype.dragedOnCart = function () {
             var model = this.drag.model;
-            console.log(model);
             this.drag.reset();
         };
         Gallery4.prototype.createColumns = function (options) {
@@ -108,7 +107,7 @@ $(document).ready(function () {
     var options = {
         canvasWidth: width,
         canvasHeight: height,
-        server: 'http://192.168.0.107/GitHub/flyer/',
+        server: 'http://192.168.0.102/GitHub/flyer/',
         getimages: 'getimages.php',
         thumbSize: 100,
         thumbDistance: 110,

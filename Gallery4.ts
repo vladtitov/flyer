@@ -67,7 +67,7 @@ namespace hallmark{
             this.canvasView =$("#canvasview");
             ModelImage.canvacView = this.canvasView;
             this.drag = new ImageDrag ();
-            this.drag.trigger.on('ON_CART',()=>this.dragedOnCart())
+            this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
             this.drag.cartX =100;
             this.drag.cartY = 300;
             this.shopingCart = new ShopingCart;
@@ -119,7 +119,6 @@ namespace hallmark{
 
         private dragedOnCart():void{
             var model:ModelImage = this.drag.model;
-            console.log(model);
             this.drag.reset();
         }
         
@@ -180,7 +179,7 @@ $(document).ready(function(){
     var options={
         canvasWidth:width,
         canvasHeight:height,
-        server:'http://192.168.0.107/GitHub/flyer/',
+        server:'http://192.168.0.102/GitHub/flyer/',
         getimages:'getimages.php',
         thumbSize:100,
         thumbDistance:110,

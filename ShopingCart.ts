@@ -13,11 +13,12 @@ interface JQuery {
 module hallmark {
     export class  ShopingCart {
         $list:JQuery;
-        constructor () {
+
+        constructor() {
             this.$list = $("#shopinglist");
         }
 
-        addItem ($img:JQuery) {
+        addItem($img:JQuery) {
             $img = $($img);
             var cont:JQuery = this.addPlaceHolder();
             cont.hide();
@@ -25,37 +26,42 @@ module hallmark {
             var offset = this.$list.offset();
             $img.addClass("trans");
             $img.offset(offset);
-            setTimeout( () => {
+            setTimeout(() => {
                 $img.removeClass("trans");
                 offset.left = 0;
                 offset.top = 0;
                 $img.offset(offset);
                 cont.append($img).css("background-color", "#fff");
                 var hammertime = new Hammer($img.get(0));
-                hammertime.get("swipe").set({ direction: Hammer.DIRECTION_VERTICAL });
+                hammertime.get("swipe").set({direction: Hammer.DIRECTION_VERTICAL});
                 hammertime.on("swipedown", (evt) => {
                     cont.addClass("trans removeimage");
-                    setTimeout( () => {
+                    setTimeout(() => {
                         $img.remove();
                         cont.hide("slow");
                     }, 1000);
                     hammertime.off("swipedown");
                 });
-            },1000);
+            }, 1000);
         }
-        
-        private addPlaceHolder ():JQuery {
+
+        private addPlaceHolder():JQuery {
             return $("<li>").prependTo(this.$list);
         }
 
-        showItem () {
-            $('#shopcartitems').css("display","block");
-            $('#spin').css("display","none");
+        showItem() {
+            $('#shopcartitems').css("display", "block");
+            $('#spin').css("display", "none");
             $('#shopcart').unbind("click");
         }
-        
-        toggleView () {
-            $('#shopcart').click(function() {
+
+        toggleView() {
+            $('#shopcartitems').toggle();
+            $('#spin').toggle();
+        }
+
+        toggleOn() {
+            $('#shopcart').click(function () {
                 $('#shopcartitems').toggle();
                 $('#spin').toggle();
             });

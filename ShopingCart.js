@@ -45,6 +45,10 @@ var hallmark;
             $('#shopcart').unbind("click");
         };
         ShopingCart.prototype.toggleView = function () {
+            $('#shopcartitems').toggle();
+            $('#spin').toggle();
+        };
+        ShopingCart.prototype.toggleOn = function () {
             $('#shopcart').click(function () {
                 $('#shopcartitems').toggle();
                 $('#spin').toggle();

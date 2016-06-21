@@ -20,9 +20,7 @@ var hallmark;
             var $img = this.model.$image;
             this.hammer = new Hammer($img.get(0));
             this.hammer.on("swiperight swipeleft", function (evt) {
-                _this.hammer.off("swiperight swipeleft");
-                _this.hammer.off("pinch rotate");
-                _this.model.setScale(1);
+                _this.hammer.off("swiperight swipeleft pinch rotate");
                 var x = $img.offset().left - 100;
                 if (evt.type == "swiperight")
                     x += 200;
@@ -43,6 +41,7 @@ var hallmark;
             pinch.recognizeWith(rotate);
             this.hammer.add([pinch, rotate]);
             this.hammer.on("pinch rotate", function (evt) {
+                evt.preventDefault();
                 var curScale = _this.model.getScale();
                 var scale = Math.max(1, Math.min(curScale * evt.scale, 3));
                 _this.model.setScale(scale);
@@ -65,13 +64,14 @@ var hallmark;
                 _this.addSwipes();
             });
         };
-        /*dragOnCart () {
+        ImageDrag.prototype.dragOnCart = function () {
             var $img = this.model.$image;
-            this.hammer.off("swiperight swipeleft");
+            this.hammer.off("swiperight swipeleft pinch rotate");
             $(document).off("touchmove touchend touchcancel");
             this.trigger.triggerHandler("DRAG_ON_CART", $img);
+            this.shopingCart.toggleOn();
             this.reset();
-        }*/
+        };
         ImageDrag.prototype.removeDrag = function () {
             $(document).off("touchmove");
         };
@@ -108,7 +108,8 @@ var hallmark;
             this.currentY = this.startY + dY;
             this.model.setOffset({ left: this.currentX, top: this.currentY });
             // $img.offset();
-            //if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
+            if (this.currentX < this.cartX && this.currentY > this.cartY)
+                this.trigger.triggerHandler('ON_CART');
         };
         ImageDrag.prototype.setImage = function (model) {
             if (this.model)

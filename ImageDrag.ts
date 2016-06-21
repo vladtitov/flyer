@@ -49,9 +49,7 @@ module hallmark {
             this.hammer = new Hammer($img.get(0));
             this.hammer.on("swiperight swipeleft", (evt) => {
 
-                this.hammer.off("swiperight swipeleft");
-                this.hammer.off("pinch rotate");
-                this.model.setScale(1);
+                this.hammer.off("swiperight swipeleft pinch rotate");
                 var x:number = $img.offset().left -100;
                 if(evt.type == "swiperight") x += 200;
                 $img.animate ({left:x});
@@ -75,6 +73,7 @@ module hallmark {
             this.hammer.add([pinch, rotate]);
 
             this.hammer.on("pinch rotate", (evt) => {
+                evt.preventDefault();
                 var curScale:number = this.model.getScale();
                 var scale = Math.max (1, Math.min (curScale * evt.scale, 3));
                 this.model.setScale(scale);
@@ -97,13 +96,14 @@ module hallmark {
             });
         }
 
-        /*dragOnCart () {
+        dragOnCart () {
             var $img = this.model.$image;
-            this.hammer.off("swiperight swipeleft");
+            this.hammer.off("swiperight swipeleft pinch rotate");
             $(document).off("touchmove touchend touchcancel");
             this.trigger.triggerHandler("DRAG_ON_CART", $img);
+            this.shopingCart.toggleOn();
             this.reset();
-        }*/
+        }
 
         removeDrag () {
             $(document).off("touchmove");
@@ -117,12 +117,12 @@ module hallmark {
             this.mouseStartX =0;
             this.mouseStartY =0;
         }
+        
         reset():void{
             this.model = null;
             this.resetXY();
             if(this.hammer){
                 this.hammer.off("swiperight swipeleft");
-
             }
             $(document).off("touchmove touchend touchcancel");
         }
@@ -147,7 +147,7 @@ module hallmark {
             this.currentY = this.startY + dY;
             this.model.setOffset({left: this.currentX, top: this.currentY});
            // $img.offset();
-            //if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
+            if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
 
         }
 

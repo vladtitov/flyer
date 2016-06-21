@@ -22,7 +22,7 @@ var hallmark;
             this.loadImage();
             var sh = new Shape();
             sh.name = 'shape';
-            sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
+            /*sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);*/
             this.canvasView.addChild(sh);
         }
         ModelImage.prototype.setX = function (x) {

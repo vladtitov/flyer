@@ -5,22 +5,22 @@
 
 #shopcart {
     float:left;
+    background-image: url("shopingcart_button.png");
+    width: 88px;
+    height: 102px;
 }
 
 button {
     padding: 0;
     border: 0;
     margin: 0 5px;
+    background-color: #3c763d;
+    outline: 0px;
 }
 
 #shopcart_container {
-    margin-top: 10px;
-    height: 100px;
-}
-
-#canvasview {
-    border: 2px solid #000;
-
+    margin: 5px 0;
+    height: 107px;
 }
 
 .clear {
@@ -41,18 +41,15 @@ button {
     position: absolute;
 }
 
-.spin {
+#spin_container {
     text-align: center;
 }
 
 #spin {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: red;
-    color: #ffffff;
-    border: 0px;
-    margin-top: 10px;
+    margin-top: 5px;
+    width: 98px;
+    height: 97px;
+    background-image: url("spin_button.png");
 }
 
 #shopcartitems {
@@ -70,15 +67,15 @@ button {
 #shopcartitems ul li {
     vertical-align: top;
     margin: 0 5px;
-    height: 90px;
-    width: 90px;
+    height: 102px;
+    width: 102px;
     white-space: nowrap;
     display: inline-block;
     text-align: center;
 }
 
 #shopinglist li>img{
-    height: 90px;
+    height: 102px;
 }
 
 #overlay {
@@ -92,5 +89,27 @@ button {
 }
 
 .removeimage {
-    transform: translateY(100%);
+    transform: translateY(120%);
 }
+
+#canvasview {
+    background-image: url("slots.png");
+    background-position: 50%, 50%;
+    background-repeat: no-repeat;
+}
+
+.arrow {
+    position: absolute;
+    top: 253px;
+}
+
+.left {
+    left:5px;
+
+}
+
+.right {
+    left:277px;
+    transform: scaleX(-1);
+}
+
