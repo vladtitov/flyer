@@ -43,7 +43,7 @@ var hallmark;
             this.hammer.on("pinch rotate", function (evt) {
                 evt.preventDefault();
                 var curScale = _this.model.getScale();
-                var scale = Math.max(1, Math.min(curScale * evt.scale, 3));
+                var scale = Math.max(1, Math.min(curScale * evt.scale, 4));
                 _this.model.setScale(scale);
                 var curRotation = _this.model.getRotation();
                 var rotation = curRotation + evt.rotation;

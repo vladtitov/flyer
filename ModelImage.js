@@ -72,7 +72,6 @@ var hallmark;
             return this.curScale;
         };
         ModelImage.prototype.setRotation = function (num) {
-            console.log(num);
             this.curRotation = num;
             this.$image.css("transform", "scale(" + this.curScale + ") rotate(" + this.curRotation + "deg)");
         };

@@ -109,7 +109,6 @@ module hallmark{
         }
 
         setRotation (num:number) {
-            console.log(num);
             this.curRotation = num;
             this.$image.css ("transform", "scale("+ this.curScale +") rotate(" + this.curRotation + "deg)");
         }
