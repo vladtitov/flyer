@@ -24,7 +24,6 @@ var hallmark;
             this.view.addEventListener('mousedown', function (evt) {
                 _this.isMove = false;
                 //  this.isHold = false;
-                console.log('mousedowm');
                 _this.pointerid = evt.pointerID;
                 //   this.prev = evt.stageY;
                 _this.startX = evt.stageX;

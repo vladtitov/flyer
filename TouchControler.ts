@@ -53,7 +53,6 @@ import Container = createjs.Container;
         this.view.addEventListener('mousedown', (evt:any)=> {
             this.isMove = false;
           //  this.isHold = false;
-            console.log('mousedowm');
             this.pointerid = evt.pointerID;
          //   this.prev = evt.stageY;
             this.startX = evt.stageX;

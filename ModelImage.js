@@ -2,6 +2,7 @@
  * Created by Vlad on 6/18/2016.
  */
 ///<reference path="CollectionImages.ts"/>
+///<reference path="ImageDrag.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;
@@ -9,8 +10,7 @@ var hallmark;
     var ModelImage = (function () {
         function ModelImage(vo) {
             this.vo = vo;
-            this.curScale = 1;
-            this.curRotation = 0;
+            this.transformType = "transform";
             for (var str in vo)
                 this[str] = vo[str];
             var size = ModelImage.thumbSize;
@@ -19,6 +19,7 @@ var hallmark;
             this.canvasView = new Container();
             this.canvasView.mouseChildren = false;
             this.canvasView.name = 'canvasView_' + this.id;
+            this.resetElement();
             this.loadImage();
             var sh = new Shape();
             sh.name = 'shape';
@@ -41,6 +42,16 @@ var hallmark;
             cont.addChild(this.canvasView);
             return this;
         };
+        ModelImage.prototype.resetElement = function () {
+            this.transform = { translate: { x: 0, y: 0 },
+                scale: 1,
+                angle: 0,
+                rx: 0,
+                ry: 0,
+                rz: 0
+            };
+            return this;
+        };
         ModelImage.prototype.removeDragImage = function () {
             var $img = this.$image;
             $img.fadeOut('slow', function () { $img.remove(); });
@@ -49,34 +60,47 @@ var hallmark;
         ModelImage.prototype.appendToDrag = function ($cont) {
             var _this = this;
             this.$image = $(this.image).clone();
+            this.imageClone = this.$image.get(0);
             this.$image.on('remove_me', function () { return _this.removeDragImage(); });
             var off = ModelImage.canvacView.offset();
             var p = this.canvasView.localToGlobal(0, 0);
-            off.left += p.x;
-            off.top += p.y;
-            this.$image.offset(off).appendTo($cont);
+            /*off.left+=p.x;
+            off.top+=p.y;*/
+            this.transform.translate.x = off.left + p.x;
+            this.transform.translate.y = off.top + p.y;
+            this.$image.appendTo($cont);
             return this;
         };
-        ModelImage.prototype.setOffset = function (o) {
-            this.curOffset = o;
-            return this.$image.offset(o);
+        ModelImage.prototype.setOffset = function (x, y) {
+            this.transform.translate.x = x;
+            this.transform.translate.y = y;
         };
         ModelImage.prototype.getOffset = function () {
-            return this.$image.offset();
+            return { x: this.transform.translate.x, y: this.transform.translate.y };
         };
-        ModelImage.prototype.setScale = function (num) {
-            this.curScale = num;
-            this.$image.css("transform", "scale(" + this.curScale + ") rotate(" + this.curRotation + "deg)");
+        ModelImage.prototype.renderTransform = function () {
+            var value_array = [
+                'translate3d(' + this.transform.translate.x + 'px, ' + this.transform.translate.y + 'px, 0)',
+                'scale(' + this.transform.scale + ', ' + this.transform.scale + ')',
+                'rotate3d(' + this.transform.rx + ',' + this.transform.ry + ',' + this.transform.rz + ',' + this.transform.angle + 'deg)'
+            ];
+            var value = value_array.join(" ");
+            this.imageClone.style.webkitTransform = value;
+            //this.image.style.mozTransform = value;
+            //this.image.style[this.transformType] = value;
+        };
+        ModelImage.prototype.setScale = function (scale) {
+            this.transform.scale = scale;
+        };
+        ModelImage.prototype.setAngle = function (angle) {
+            this.transform.rz = 1;
+            this.transform.angle = angle;
         };
         ModelImage.prototype.getScale = function () {
-            return this.curScale;
+            return this.transform.scale;
         };
-        ModelImage.prototype.setRotation = function (num) {
-            this.curRotation = num;
-            this.$image.css("transform", "scale(" + this.curScale + ") rotate(" + this.curRotation + "deg)");
-        };
-        ModelImage.prototype.getRotation = function () {
-            return this.curRotation;
+        ModelImage.prototype.getAngle = function () {
+            return this.transform.angle;
         };
         ModelImage.prototype.loadImage = function () {
             var _this = this;

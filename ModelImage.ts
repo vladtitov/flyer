@@ -2,6 +2,7 @@
  * Created by Vlad on 6/18/2016.
  */
     ///<reference path="CollectionImages.ts"/>
+    ///<reference path="ImageDrag.ts"/>
 
 
 module hallmark{
@@ -30,15 +31,20 @@ module hallmark{
         thumb: string;
         id:number;
         image:HTMLImageElement;
+        imageClone:HTMLImageElement;
         $image:JQuery;
         canvasView:Container;
         static thumbSize:number;
         static trigger:JQuery = $({});
         static IMAGE_LOADED:string = "IMAGE_LOADED";
         categories: number [];
-        private curScale:number = 1;
-        private curRotation:number = 0;
-        public curOffset: {left:number; top:number};
+        transform : {translate: {x: number; y:number};
+            scale: number;
+            angle: number;
+            rx: number;
+            ry: number;
+            rz: number;
+        };
 
         setX(x:number):ModelImage{
             this.canvasView.x=x;
@@ -64,6 +70,7 @@ module hallmark{
             this.canvasView= new Container();
             this.canvasView.mouseChildren = false;
             this.canvasView.name= 'canvasView_'+this.id;
+            this.resetElement ();
             this.loadImage();
             var sh:Shape = new Shape();
             sh.name='shape'
@@ -72,7 +79,17 @@ module hallmark{
 
         }
 
-
+        resetElement ():ModelImage {
+            this.transform = {translate: {x:0, y:0},
+                scale: 1,
+                angle: 0,
+                rx: 0,
+                ry: 0,
+                rz: 0
+            };
+            return this;
+        }
+        
         removeDragImage():ModelImage{
             var $img:JQuery = this.$image;
             $img.fadeOut('slow',function () { $img.remove(); });
@@ -81,40 +98,59 @@ module hallmark{
 
         appendToDrag($cont:JQuery):ModelImage{
             this.$image = $(this.image).clone();
+            this.imageClone = this.$image.get(0);
             this.$image.on('remove_me',()=>this.removeDragImage());
             var off = ModelImage.canvacView.offset();
             var p:Point = this.canvasView.localToGlobal(0,0);
-            off.left+=p.x;
-            off.top+=p.y;
-            this.$image.offset(off).appendTo($cont);
+            /*off.left+=p.x;
+            off.top+=p.y;*/
+            this.transform.translate.x = off.left+p.x;
+            this.transform.translate.y = off.top+p.y;
+            this.$image.appendTo($cont);
             return this;
         }
 
-        setOffset(o:{left:number; top:number}):JQuery {
-            this.curOffset = o;
-            return this.$image.offset(o)
+        setOffset(x:number, y:number) {
+            this.transform.translate.x = x;
+            this.transform.translate.y = y;
         }
 
-        getOffset (): {left:number; top:number} {
-            return this.$image.offset();
+        getOffset (): {x:number; y:number} {
+            return {x:this.transform.translate.x, y:this.transform.translate.y};
         }
 
-        setScale (num:number) {
-            this.curScale = num;
-            this.$image.css ("transform", "scale("+ this.curScale +") rotate(" + this.curRotation + "deg)");
+        private transformType:string = "transform";
+
+        renderTransform () {
+             var value_array:string [] = [
+                'translate3d(' + this.transform.translate.x + 'px, ' + this.transform.translate.y + 'px, 0)',
+                 'scale(' + this.transform.scale + ', ' + this.transform.scale + ')',
+                'rotate3d('+ this.transform.rx +','+ this.transform.ry +','+ this.transform.rz +','+  this.transform.angle + 'deg)'
+                 ];
+
+             var value:string = value_array.join(" ");
+             this.imageClone.style.webkitTransform = value;
+             //this.image.style.mozTransform = value;
+             //this.image.style[this.transformType] = value;
+
         }
+
+        setScale (scale:number) {
+            this.transform.scale = scale;
+        }
+
+        setAngle (angle:number) {
+            this.transform.rz = 1;
+            this.transform.angle = angle;
+        }
+
 
         getScale ():number {
-            return this.curScale;
+            return this.transform.scale;
         }
 
-        setRotation (num:number) {
-            this.curRotation = num;
-            this.$image.css ("transform", "scale("+ this.curScale +") rotate(" + this.curRotation + "deg)");
-        }
-
-        getRotation ():number {
-            return this.curRotation;
+        getAngle ():number {
+            return this.transform.angle;
         }
 
         loadImage():void{

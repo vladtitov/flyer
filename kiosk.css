@@ -92,24 +92,29 @@ button {
     transform: translateY(120%);
 }
 
-#canvasview {
-    background-image: url("slots.png");
-    background-position: 50%, 50%;
-    background-repeat: no-repeat;
-}
-
 .arrow {
     position: absolute;
-    top: 253px;
+    top: 291px;
 }
 
 .left {
-    left:5px;
+    left:7px;
 
 }
 
 .right {
-    left:277px;
+    left:328px;
     transform: scaleX(-1);
 }
 
+#wrapper {
+    margin-left: 5px;
+}
+
+#slots {
+    width: 356px;
+    height: 425px;
+    background-image: url("slots.png");
+    display:table-cell;
+    vertical-align:middle;
+}

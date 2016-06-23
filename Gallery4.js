@@ -25,11 +25,11 @@ var hallmark;
             hallmark.ModelImage.canvacView = this.canvasView;
             this.drag = new hallmark.ImageDrag();
             this.drag.trigger.on('ON_CART', function () { return _this.drag.dragOnCart(); });
-            this.drag.cartX = 100;
-            this.drag.cartY = 300;
+            this.drag.cartX = 90;
+            this.drag.cartY = 435;
             this.shopingCart = new hallmark.ShopingCart;
             this.drag.shopingCart = this.shopingCart;
-            this.drag.trigger.on("DRAG_ON_CART", function (evt, img) { return _this.shopingCart.addItem(img); });
+            this.drag.trigger.on("DRAG_ON_CART", function (evt, model) { return _this.shopingCart.addItem(model); });
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
@@ -75,7 +75,7 @@ var hallmark;
             var _this = this;
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
-                column.setPosition(i * 100 + 5, 10);
+                column.setPosition(i * 106 + 22, 0);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
                 column.on('selected', function (evt, model) { return _this.onImageSelected(model); });
@@ -98,8 +98,8 @@ var hallmark;
 })(hallmark || (hallmark = {}));
 $(document).ready(function () {
     console.log($(window).width() + 'x' + $(window).height());
-    var width = $(window).width();
-    var height = $(window).height() - 230;
+    var width = $('#slots').width();
+    var height = 320;
     $('#shopcart').click(function () {
         $('#shopcartitems').toggle();
         $('#spin').toggle();

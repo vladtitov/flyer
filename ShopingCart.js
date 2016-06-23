@@ -4,14 +4,16 @@
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
+///<reference path="ModelImage.ts"/>
 var hallmark;
 (function (hallmark) {
     var ShopingCart = (function () {
         function ShopingCart() {
             this.$list = $("#shopinglist");
         }
-        ShopingCart.prototype.addItem = function ($img) {
-            $img = $($img);
+        ShopingCart.prototype.addItem = function (model) {
+            model.resetElement().renderTransform();
+            var $img = model.$image;
             var cont = this.addPlaceHolder();
             cont.hide();
             cont.show("slow");

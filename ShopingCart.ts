@@ -5,6 +5,8 @@
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
+///<reference path="ModelImage.ts"/>
+
 
 interface JQuery {
     hammer ():JQuery;
@@ -18,8 +20,9 @@ module hallmark {
             this.$list = $("#shopinglist");
         }
 
-        addItem($img:JQuery) {
-            $img = $($img);
+        addItem(model:ModelImage) {
+            model.resetElement().renderTransform();
+            var $img = model.$image;
             var cont:JQuery = this.addPlaceHolder();
             cont.hide();
             cont.show("slow");
