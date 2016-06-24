@@ -107,8 +107,8 @@ $(document).ready(function () {
     var options = {
         canvasWidth: width,
         canvasHeight: height,
-        server: 'http://192.168.0.102/GitHub/flyer/',
-        getimages: 'getimages.php',
+        server: 'http://front-desk.ca/gallery/',
+        getimages: 'getimages',
         thumbSize: 100,
         thumbDistance: 110,
         rowHeight: height,
