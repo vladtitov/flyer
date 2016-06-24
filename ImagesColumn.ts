@@ -6,7 +6,8 @@
     /// <reference path="typings/easeljs.d.ts" />
     ///<reference path="Gallery4.ts"/>
     ///<reference path="TouchControler.ts"/>
-    
+    ///<reference path="ShopingCart.ts"/>
+
     
 
 
@@ -32,7 +33,11 @@ module hallmark {
         private dist:number;
         private holdTimer:number;
         touchControler:TouchControler;
+        shopingCart:ShopingCart;
         trigger:JQuery = $({});
+        speed:number;
+        speedSpin:number = 40;
+        isFriction:boolean;
 
         constructor(private  lib:CollectionImages, private opt:any, private id:number) {
 
@@ -61,19 +66,51 @@ module hallmark {
 
             createjs.Ticker.addEventListener("tick", ()=> {
                 if (this.touchControler.isMove) {
-                    var speed = Math.abs(this.touchControler.speed);
-                    if (speed > 5 && speed < 20) this.friction = 0.995;
-                    else  this.friction = 0.95;
+                    this.speed = Math.abs(this.touchControler.speed);
+
+                    if (this.isFriction) {
+                        if (this.speed > 5 && this.speed < 20) this.friction = 0.995;
+                        else  this.friction = 0.95;
+                    }else this.friction = 1;
+
                     this.touchControler.speed *= this.friction;
-                    if (speed < 1) this.touchControler.isMove = false;
-                    // console.log(this.speed);
+                    if (this.speed <5 && this.touchControler.isSpin) {
+                        this.touchControler.isMove = false;
+                        this.stopOnImage ();
+                        this.onMoveStop();
+                    }
+                    if (this.speed < 1) {
+                        this.touchControler.isMove = false;
+                        this.onMoveStop();
+                    }
                     self.move(this.touchControler.speed);
                 }
             });
-
-
+         
         }
 
+        onMoveStop () {
+            this.trigger.triggerHandler('ON_MOVE_STOP')
+        }
+
+        stopOnImage () {
+            this.first = 0;
+            this.arangeImages();
+        }
+        
+        addFriction() {
+            this.isFriction = true;
+        }
+
+        isMove ():boolean {
+            return this.touchControler.isMove;
+        }
+
+        public spin ():void {
+            this.isFriction = false;
+            this.touchControler.spin (this.speedSpin);
+        }
+        
         on(event:string,callback:Function):void{
             this.trigger.on(event,callback);
         }
@@ -101,7 +138,7 @@ module hallmark {
             for (var i = 0, n = num; i < n; i++) {
                 var model:ModelImage = this.lib.getNext();
                 this.images.push(model);
-                this.view.addChild(model.canvasView)
+                this.view.addChild(model.canvasView);
                 //imgs.push(this.view.addChild(bmp));
             }
 
@@ -149,8 +186,7 @@ module hallmark {
                 // console.log(this.first);
                 var img:ModelImage = this.images.shift();
                 img.removeFrom(this.view);
-                
-                img = this.lib.getNext();                
+                img = this.lib.getNext();
                 img.setY(-this.dist * 1.2);
                 this.images.push(img);
                 img.appendTo(this.view);
@@ -169,8 +205,7 @@ module hallmark {
                 this.first = this.first - this.dist;
                 //   console.log(this.first);
                 //  this.arangeImages();
-            }           
-
+            }
         }
 
         /*private moveImages(dist){
@@ -186,5 +221,5 @@ module hallmark {
          }
          }*/
     }
-
 }
+

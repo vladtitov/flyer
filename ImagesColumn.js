@@ -6,6 +6,7 @@
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="Gallery4.ts"/>
 ///<reference path="TouchControler.ts"/>
+///<reference path="ShopingCart.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;
@@ -17,6 +18,7 @@ var hallmark;
             this.id = id;
             this.images = [];
             this.trigger = $({});
+            this.speedSpin = 40;
             //view.setBounds(0,0,options.rowWidth,options.rowHeight);
             this.dist = opt.thumbDistance;
             var cont = new Container();
@@ -35,19 +37,46 @@ var hallmark;
             var stamp = Date.now();
             createjs.Ticker.addEventListener("tick", function () {
                 if (_this.touchControler.isMove) {
-                    var speed = Math.abs(_this.touchControler.speed);
-                    if (speed > 5 && speed < 20)
-                        _this.friction = 0.995;
+                    _this.speed = Math.abs(_this.touchControler.speed);
+                    if (_this.isFriction) {
+                        if (_this.speed > 5 && _this.speed < 20)
+                            _this.friction = 0.995;
+                        else
+                            _this.friction = 0.95;
+                    }
                     else
-                        _this.friction = 0.95;
+                        _this.friction = 1;
                     _this.touchControler.speed *= _this.friction;
-                    if (speed < 1)
+                    if (_this.speed < 5 && _this.touchControler.isSpin) {
                         _this.touchControler.isMove = false;
-                    // console.log(this.speed);
+                        _this.stopOnImage();
+                        _this.onMoveStop();
+                    }
+                    if (_this.speed < 1) {
+                        _this.touchControler.isMove = false;
+                        _this.onMoveStop();
+                    }
                     self.move(_this.touchControler.speed);
                 }
             });
         }
+        ImagesColumn.prototype.onMoveStop = function () {
+            this.trigger.triggerHandler('ON_MOVE_STOP');
+        };
+        ImagesColumn.prototype.stopOnImage = function () {
+            this.first = 0;
+            this.arangeImages();
+        };
+        ImagesColumn.prototype.addFriction = function () {
+            this.isFriction = true;
+        };
+        ImagesColumn.prototype.isMove = function () {
+            return this.touchControler.isMove;
+        };
+        ImagesColumn.prototype.spin = function () {
+            this.isFriction = false;
+            this.touchControler.spin(this.speedSpin);
+        };
         ImagesColumn.prototype.on = function (event, callback) {
             this.trigger.on(event, callback);
         };

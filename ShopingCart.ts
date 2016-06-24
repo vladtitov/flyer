@@ -51,23 +51,5 @@ module hallmark {
         private addPlaceHolder():JQuery {
             return $("<li>").prependTo(this.$list);
         }
-
-        showItem() {
-            $('#shopcartitems').css("display", "block");
-            $('#spin').css("display", "none");
-            $('#shopcart').unbind("click");
-        }
-
-        toggleView() {
-            $('#shopcartitems').toggle();
-            $('#spin').toggle();
-        }
-
-        toggleOn() {
-            $('#shopcart').click(function () {
-                $('#shopcartitems').toggle();
-                $('#spin').toggle();
-            });
-        }
     }
 }

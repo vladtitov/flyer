@@ -29,7 +29,7 @@ var hallmark;
             }
             else
                 return;
-            this.mc = new Hammer.Manager(this.$image.get(0));
+            this.mc = new Hammer.Manager(this.img);
             this.mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
             this.mc.add(new Hammer.Swipe()).recognizeWith(this.mc.get('pan'));
             this.mc.add(new Hammer.Rotate({ threshold: 0 })).recognizeWith(this.mc.get('pan'));
@@ -102,7 +102,7 @@ var hallmark;
             this.$image.animate({ left: x });
             this.model.removeDragImage();
             this.reset();
-            this.shopingCart.toggleOn();
+            this.trigger.triggerHandler("ON_TOGGLE");
         };
         ImageDrag.prototype.addSwipes = function () {
             var _this = this;
@@ -113,7 +113,7 @@ var hallmark;
         };
         ImageDrag.prototype.dragOnCart = function () {
             this.trigger.triggerHandler("DRAG_ON_CART", this.model);
-            this.shopingCart.toggleOn();
+            this.trigger.triggerHandler("ON_TOGGLE");
             this.reset();
         };
         ImageDrag.prototype.removeDrag = function () {

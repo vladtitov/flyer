@@ -41,21 +41,6 @@ var hallmark;
         ShopingCart.prototype.addPlaceHolder = function () {
             return $("<li>").prependTo(this.$list);
         };
-        ShopingCart.prototype.showItem = function () {
-            $('#shopcartitems').css("display", "block");
-            $('#spin').css("display", "none");
-            $('#shopcart').unbind("click");
-        };
-        ShopingCart.prototype.toggleView = function () {
-            $('#shopcartitems').toggle();
-            $('#spin').toggle();
-        };
-        ShopingCart.prototype.toggleOn = function () {
-            $('#shopcart').click(function () {
-                $('#shopcartitems').toggle();
-                $('#spin').toggle();
-            });
-        };
         return ShopingCart;
     }());
     hallmark.ShopingCart = ShopingCart;

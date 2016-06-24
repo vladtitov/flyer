@@ -74,6 +74,7 @@ var hallmark;
                 _this.prevX = nowX;
                 if (d !== 0) {
                     _this.speed = d;
+                    _this.isSpin = false;
                     _this.isMove = true;
                     _this.move(d);
                 }
@@ -92,6 +93,12 @@ var hallmark;
              }
          }*/
         TouchControler.prototype.move = function (d) {
+        };
+        TouchControler.prototype.spin = function (speed) {
+            this.isMove = true;
+            this.isSpin = true;
+            this.speed = speed;
+            this.move(speed);
         };
         TouchControler.prototype.onPressHold = function (evt) {
             // this.trigger.triggerHandler(TouchControler.PRESS_HOLD,evt.target);

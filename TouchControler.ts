@@ -103,6 +103,7 @@ import Container = createjs.Container;
             this.prevX = nowX;
             if(d!==0){
                 this.speed = d;
+                this.isSpin =false;
                 this.isMove = true;
                 this.move(d);
             }
@@ -123,6 +124,15 @@ import Container = createjs.Container;
             }*/
     public move (d:number) {
 
+    }
+    
+    isSpin:boolean;       
+            
+    public spin (speed:number):void {
+        this.isMove = true;
+        this.isSpin = true; 
+        this.speed = speed;
+        this.move(speed);
     }
 
     onPressHold (evt) {

@@ -73,6 +73,7 @@ namespace hallmark{
             this.shopingCart = new ShopingCart;
             this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on ("DRAG_ON_CART", (evt, model) => this.shopingCart.addItem(model));
+            this.drag.trigger.on ("ON_TOGGLE", (evt) => this.toggleOn());
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
@@ -83,7 +84,7 @@ namespace hallmark{
              this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50,()=>{
                  this.createColumns(options);
              })
-  
+            this.initSpin();
            /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
                 var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
                 if(img) this.preview.showImage(DO,img);
@@ -121,27 +122,84 @@ namespace hallmark{
             var model:ModelImage = this.drag.model;
             this.drag.reset();
         }
-        
+
+        collectionColumn:ImagesColumn [];
+
         createColumns(options):void{
-          
+            this.collectionColumn = [];
             for(var i=0; i<3; i++) {
                 var column:ImagesColumn = new ImagesColumn(this.imagesLibrary,options,i);
                 column.setPosition(i*106+22, 0);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
                 column.on('selected',(evt,model:ModelImage)=> this.onImageSelected(model));
+                column.on('ON_MOVE_STOP', (evt) => this.onColumnStop());
+                this.collectionColumn.push(column);
               // column.tr
                 //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
                // column.onImageSelected = (img) => this.onImageSelected(img);
 
             }
-
         }
-
+        
+        onColumnStop () {
+            var stop:boolean = true;
+            this.collectionColumn.forEach( function (item:ImagesColumn) {
+                if (item.isMove () ) stop = false;
+            });
+            if (stop) {
+                $('#spin').css("opacity", "1");
+                this.initSpin();
+            };
+        };
+        
         private onImageSelected (model:ModelImage) {
-            this.shopingCart.showItem ();
+            this.showItem ();
             this.drag.setImage(model);
         }
+
+        initSpin ():void {
+            $('#spin').click( () => {
+                this.collectionColumn.forEach( function (item:ImagesColumn) {
+                    item.spin();
+                } );
+                setTimeout( () => {
+                   this.stopColumn(2);
+                },2000);
+                setTimeout( () => {
+                    this.stopColumn(1);
+                },3000);
+                setTimeout( () => {
+                    this.stopColumn(0);
+                },4000);
+                
+                $('#spin').css("opacity", "0.5");
+                $('#spin').unbind("click");
+            });
+        }
+
+        stopColumn (num:number):void {
+            this.collectionColumn[num].addFriction();
+        }
+
+        showItem() {
+            $('#shopcartitems').css("display", "block");
+            $('#spin').css("display", "none");
+            $('#shopcart').unbind("click");
+        }
+
+        toggleView() {
+            $('#shopcartitems').toggle();
+            $('#spin').toggle();
+        }
+
+        toggleOn() {
+            $('#shopcart').click(function () {
+                $('#shopcartitems').toggle();
+                $('#spin').toggle();
+            });
+        }
+        
     }
 
     interface Images{
@@ -157,6 +215,8 @@ namespace hallmark{
             this.gallery = new hallmark.Gallery4(opt);
         }
     }
+
+
 }
 
 
@@ -171,10 +231,6 @@ $(document).ready(function(){
         $('#shopcartitems').toggle();
         $('#spin').toggle();
     });
-
-
-
-    
 
     var options={
         canvasWidth:width,

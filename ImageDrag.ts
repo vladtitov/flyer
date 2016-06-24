@@ -60,7 +60,7 @@ module hallmark {
                 this.$image = this.model.$image;
             } else return;
 
-            this.mc = new Hammer.Manager(this.$image.get(0));
+            this.mc = new Hammer.Manager(this.img);
 
             this.mc.add(new Hammer.Pan({threshold: 0, pointers: 0}));
 
@@ -110,7 +110,7 @@ module hallmark {
             this.currentX = this.startX + ev.deltaX;
             this.currentY = this.startY + ev.deltaY;
             this.model.setOffset(this.currentX, this.currentY);
-            if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART')
+            if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
             else this.requestElementUpdate();
         }
 
@@ -144,7 +144,7 @@ module hallmark {
             this.$image.animate ({left:x});
             this.model.removeDragImage();
             this.reset();
-            this.shopingCart.toggleOn();
+            this.trigger.triggerHandler("ON_TOGGLE");
         }
 
         addSwipes():void{
@@ -157,7 +157,7 @@ module hallmark {
 
         dragOnCart () {
             this.trigger.triggerHandler("DRAG_ON_CART", this.model);
-            this.shopingCart.toggleOn();
+            this.trigger.triggerHandler("ON_TOGGLE");
             this.reset();
         }
 

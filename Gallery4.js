@@ -30,6 +30,7 @@ var hallmark;
             this.shopingCart = new hallmark.ShopingCart;
             this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on("DRAG_ON_CART", function (evt, model) { return _this.shopingCart.addItem(model); });
+            this.drag.trigger.on("ON_TOGGLE", function (evt) { return _this.toggleOn(); });
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
@@ -40,6 +41,7 @@ var hallmark;
             this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50, function () {
                 _this.createColumns(options);
             });
+            this.initSpin();
             /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
                  var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
                  if(img) this.preview.showImage(DO,img);
@@ -73,17 +75,70 @@ var hallmark;
         };
         Gallery4.prototype.createColumns = function (options) {
             var _this = this;
+            this.collectionColumn = [];
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
                 column.setPosition(i * 106 + 22, 0);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
                 column.on('selected', function (evt, model) { return _this.onImageSelected(model); });
+                column.on('ON_MOVE_STOP', function (evt) { return _this.onColumnStop(); });
+                this.collectionColumn.push(column);
             }
         };
+        Gallery4.prototype.onColumnStop = function () {
+            var stop = true;
+            this.collectionColumn.forEach(function (item) {
+                if (item.isMove())
+                    stop = false;
+            });
+            if (stop) {
+                $('#spin').css("opacity", "1");
+                this.initSpin();
+            }
+            ;
+        };
+        ;
         Gallery4.prototype.onImageSelected = function (model) {
-            this.shopingCart.showItem();
+            this.showItem();
             this.drag.setImage(model);
+        };
+        Gallery4.prototype.initSpin = function () {
+            var _this = this;
+            $('#spin').click(function () {
+                _this.collectionColumn.forEach(function (item) {
+                    item.spin();
+                });
+                setTimeout(function () {
+                    _this.stopColumn(2);
+                }, 2000);
+                setTimeout(function () {
+                    _this.stopColumn(1);
+                }, 3000);
+                setTimeout(function () {
+                    _this.stopColumn(0);
+                }, 4000);
+                $('#spin').css("opacity", "0.5");
+                $('#spin').unbind("click");
+            });
+        };
+        Gallery4.prototype.stopColumn = function (num) {
+            this.collectionColumn[num].addFriction();
+        };
+        Gallery4.prototype.showItem = function () {
+            $('#shopcartitems').css("display", "block");
+            $('#spin').css("display", "none");
+            $('#shopcart').unbind("click");
+        };
+        Gallery4.prototype.toggleView = function () {
+            $('#shopcartitems').toggle();
+            $('#spin').toggle();
+        };
+        Gallery4.prototype.toggleOn = function () {
+            $('#shopcart').click(function () {
+                $('#shopcartitems').toggle();
+                $('#spin').toggle();
+            });
         };
         return Gallery4;
     }());
