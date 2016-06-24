@@ -1,11 +1,8 @@
 /**
  * Created by VladHome on 1/28/2016.
  */
-///<reference path="typings/jquery.d.ts"/>
-/// <reference path="typings/tweenjs.d.ts" />
-/// <reference path="typings/easeljs.d.ts" />
-///<reference path="Gallery4.ts"/>
-///<reference path="TouchControler.ts"/>
+///<reference path="../Gallery4.ts"/>
+///<reference path="SpinControler.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;

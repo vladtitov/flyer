@@ -2,7 +2,7 @@
  * Created by Vlad on 6/18/2016.
  */
     ///<reference path="CollectionImages.ts"/>
-    ///<reference path="ImageDrag.ts"/>
+   
 
 
 module hallmark{
@@ -178,12 +178,6 @@ module hallmark{
                 bmp.x = (size - w) / 2;
                 bmp.y = (size - h) / 2;
                 this.canvasView.addChild(bmp);
-                var sh:Shape = new Shape();
-
-                sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
-sh.alpha=0.5;
-                this.canvasView.addChild(sh);
-                this.canvasView.mouseChildren = false;
                 this.canvasView.cache(0, 0, size, size);
                 ModelImage.trigger.triggerHandler (ModelImage.IMAGE_LOADED);
 

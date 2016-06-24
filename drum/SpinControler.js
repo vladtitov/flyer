@@ -1,12 +1,10 @@
 /**
  * Created by Администратор on 15.06.2016.
  */
-///<reference path="Gallery4.ts"/>
+///<reference path="../Gallery4.ts"/>
 var hallmark;
 (function (hallmark) {
     var TouchControler = (function () {
-        //isHold:boolean;
-        //  target
         function TouchControler(view) {
             this.view = view;
             this.trigger = $({});
@@ -23,15 +21,11 @@ var hallmark;
             var _this = this;
             this.view.addEventListener('mousedown', function (evt) {
                 _this.isMove = false;
-                //  this.isHold = false;
                 _this.pointerid = evt.pointerID;
-                //   this.prev = evt.stageY;
                 _this.startX = evt.stageX;
                 _this.startY = evt.stageY;
                 _this.prevX = _this.startX;
                 _this.prevY = _this.startY;
-                //  this.pressStart = evt.stageY;
-                // if (Math.abs(this.speed) > 5) this.pressStart = 0;
                 clearTimeout(_this.clickTimer);
                 if (_this.speed === 0)
                     _this.clickTimer = setTimeout(function () {
@@ -44,24 +38,7 @@ var hallmark;
                     return;
                 if (_this.clickTimer !== 0)
                     _this.onClick(evt);
-                /*  var x:number = evt.startX;
-                  var y:number = evt.startY;
-                  if(Math.abs(this.startX-x)+Math.abs(this.startY-y)<6){
-      
-                  }*/
-                // if (this.isHold) return;
-                // if(this.holdTimer !==0){
-                //   clearTimeout(this.holdTimer);
-                // this.holdTimer=0;
-                // }
-                //    if (this.pressStart !== 0 && Math.abs(this.pressStart - evt.stageY) < 6) {
-                //if (ImagesColumn.onImageClick)ImagesColumn.onImageClick(evt.target)
-                //   }
                 _this.pointerid = -1;
-                //  var self = this;
-                // if (Math.abs(this.speed) > 5) {
-                //  this.isMove = true;
-                // }
             });
             this.view.addEventListener('pressmove', function (evt) {
                 //  if (this.isHold) return;
@@ -85,12 +62,6 @@ var hallmark;
                     callBack(evt);
                 });
         };
-        /* private resetHold():void{
-             if(this.holdTimer !==0){
-                 clearTimeout(this.holdTimer);
-                 this.holdTimer=0;
-             }
-         }*/
         TouchControler.prototype.move = function (d) {
         };
         TouchControler.prototype.onPressHold = function (evt) {
@@ -100,4 +71,4 @@ var hallmark;
     }());
     hallmark.TouchControler = TouchControler;
 })(hallmark || (hallmark = {}));
-//# sourceMappingURL=TouchControler.js.map
+//# sourceMappingURL=SpinControler.js.map

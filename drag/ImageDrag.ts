@@ -1,11 +1,8 @@
 /**
  * Created by Администратор on 14.06.2016.
  */
-/// <reference path="typings/easeljs.d.ts" />
-///<reference path="typings/hammerjs/hammerjs.d.ts"/>
-///<reference path="typings/jquery.d.ts"/>
-///<reference path="ModelImage.ts"/>
-///<reference path="ShopingCart.ts"/>
+
+///<reference path="../Gallery4.ts"/>
 
 
 interface JQuery {
@@ -76,9 +73,9 @@ module hallmark {
             this.mc.on("pinchstart", (evt) => this.onPinchStart(evt));
             this.mc.on("pinchend", (evt) => this.onPinchEnd(evt));
 
-            this.mc.on("rotatestart", (evt) => this.onRotate (evt));
+            this.mc.on("rotatestart", (evt) => this.onRotateStart (evt));
             this.mc.on("rotatemove", (evt) => this.onRotate (evt));
-            this.mc.on("rotateend", (evt) => this.onRotate (evt));
+            this.mc.on("rotateend", (evt) => this.onRotateEnd (evt));
             //this.mc.on("pinchend rotatenend", (evt) => this.onPinchRotate(evt));
 
             this.mc.on("hammer.input", (ev)=> {
@@ -96,13 +93,15 @@ module hallmark {
         }
         onRotate(ev:HammerInput):void {
             //this.mc.off("pinchstart pinchmove");
-            console.log(this.model.getAngle() + ev.rotation);
-            this.model.setAngle (this.model.getAngle() + ev.rotation);
-            this.requestElementUpdate();
+           // console.log(this.model.getAngle() + ev.rotation);
+           // this.model.setAngle (this.model.getAngle() + ev.rotation);
+           // this.requestElementUpdate();
         }
 /////////////////////////////
+        private startScale:number;
         onPinchStart(evt:HammerInput):void{
-
+            this.startScale = evt.scale;
+            console.log('start scale '+this.startScale);
         }
         
         onPinchEnd(evt:HammerInput):void{
@@ -110,10 +109,13 @@ module hallmark {
         }
 
         onPinch(ev:HammerInput):void {
+
             //this.mc.off("rotatestart rotatemove");
-            var scale = Math.max( 1, Math.min((this.model.getScale() * ev.scale), 3));
-            console.log(scale);
-            this.model.setScale (scale);
+            var scale = this.startScale*ev.scale;
+            console.log('onPinch '+scale);
+           // var scale = Math.max( 1, Math.min((this.model.getScale() * ev.scale), 3));
+            //console.log(scale);
+           // this.model.setScale (scale);
             this.requestElementUpdate();
         }
 
@@ -140,7 +142,7 @@ module hallmark {
             var offset = this.model.getOffset();
             this.startX = offset.x;
             this.startY = offset.y;
-            this.removeSwipes();
+           // this.removeSwipes();
         }
 
         onPan(ev:HammerInput):void {
@@ -152,7 +154,7 @@ module hallmark {
         }
 
         onPanEnd(ev:HammerInput):void {
-            this.addSwipes();
+           // this.addSwipes();
         }
 
 

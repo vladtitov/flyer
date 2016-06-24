@@ -4,11 +4,12 @@
 ///<reference path="typings/jquery.d.ts"/>
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
-///<reference path="ImagesColumn.ts"/>
+///<reference path="drum/ImagesColumn.ts"/>
 ///<reference path="CollectionImages.ts"/>
-///<reference path="ImageView.ts"/>
-///<reference path="ImageDrag.ts"/>
+
 ///<reference path="ShopingCart.ts"/>
+///<reference path="drag/ImageDrag.ts"/>
+    
 
 
 
@@ -59,7 +60,7 @@ namespace hallmark{
         isWebGL:boolean;
         imagesLibrary:CollectionImages;
         private current:number;
-        private preview:ImagePreview;
+      //  private preview:ImagePreview;
         private drag:ImageDrag;
         private shopingCart:ShopingCart;
         private canvasView:JQuery;
@@ -90,7 +91,7 @@ namespace hallmark{
                 this.stage.addChild(this.preview.view);
             }*/
 
-            this.preview = new ImagePreview(options);
+           // this.preview = new ImagePreview(options);
 
             createjs.Touch.enable(this.stage);
             createjs.Ticker.framerate = 60;
@@ -179,8 +180,8 @@ $(document).ready(function(){
     var options={
         canvasWidth:width,
         canvasHeight:height,
-        server:'http://front-desk.ca/gallery/',
-        getimages:'getimages',
+        server:'http://localhost/GitHub/flyer/',
+        getimages:'getimages.php',
         thumbSize:100,
         thumbDistance:110,
         rowHeight: height,

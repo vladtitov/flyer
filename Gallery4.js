@@ -4,11 +4,10 @@
 ///<reference path="typings/jquery.d.ts"/>
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
-///<reference path="ImagesColumn.ts"/>
+///<reference path="drum/ImagesColumn.ts"/>
 ///<reference path="CollectionImages.ts"/>
-///<reference path="ImageView.ts"/>
-///<reference path="ImageDrag.ts"/>
 ///<reference path="ShopingCart.ts"/>
+///<reference path="drag/ImageDrag.ts"/>
 var hallmark;
 (function (hallmark) {
     var ImagesRowOpt = (function () {
@@ -45,7 +44,7 @@ var hallmark;
                  if(img) this.preview.showImage(DO,img);
                  this.stage.addChild(this.preview.view);
              }*/
-            this.preview = new hallmark.ImagePreview(options);
+            // this.preview = new ImagePreview(options);
             createjs.Touch.enable(this.stage);
             createjs.Ticker.framerate = 60;
             var stage = this.stage;
@@ -107,8 +106,8 @@ $(document).ready(function () {
     var options = {
         canvasWidth: width,
         canvasHeight: height,
-        server: 'http://front-desk.ca/gallery/',
-        getimages: 'getimages',
+        server: 'http://localhost/GitHub/flyer/',
+        getimages: 'getimages.php',
         thumbSize: 100,
         thumbDistance: 110,
         rowHeight: height,

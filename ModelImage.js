@@ -2,7 +2,6 @@
  * Created by Vlad on 6/18/2016.
  */
 ///<reference path="CollectionImages.ts"/>
-///<reference path="ImageDrag.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;
@@ -124,11 +123,6 @@ var hallmark;
                 bmp.x = (size - w) / 2;
                 bmp.y = (size - h) / 2;
                 _this.canvasView.addChild(bmp);
-                var sh = new Shape();
-                sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
-                sh.alpha = 0.5;
-                _this.canvasView.addChild(sh);
-                _this.canvasView.mouseChildren = false;
                 _this.canvasView.cache(0, 0, size, size);
                 ModelImage.trigger.triggerHandler(ModelImage.IMAGE_LOADED);
             };

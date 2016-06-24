@@ -1,11 +1,7 @@
 /**
  * Created by Администратор on 14.06.2016.
  */
-/// <reference path="typings/easeljs.d.ts" />
-///<reference path="typings/hammerjs/hammerjs.d.ts"/>
-///<reference path="typings/jquery.d.ts"/>
-///<reference path="ModelImage.ts"/>
-///<reference path="ShopingCart.ts"/>
+///<reference path="../Gallery4.ts"/>
 var hallmark;
 (function (hallmark) {
     var ImageDrag = (function () {
@@ -40,9 +36,9 @@ var hallmark;
             this.mc.on("pinchmove", function (evt) { return _this.onPinch(evt); });
             this.mc.on("pinchstart", function (evt) { return _this.onPinchStart(evt); });
             this.mc.on("pinchend", function (evt) { return _this.onPinchEnd(evt); });
-            this.mc.on("rotatestart", function (evt) { return _this.onRotate(evt); });
+            this.mc.on("rotatestart", function (evt) { return _this.onRotateStart(evt); });
             this.mc.on("rotatemove", function (evt) { return _this.onRotate(evt); });
-            this.mc.on("rotateend", function (evt) { return _this.onRotate(evt); });
+            this.mc.on("rotateend", function (evt) { return _this.onRotateEnd(evt); });
             //this.mc.on("pinchend rotatenend", (evt) => this.onPinchRotate(evt));
             this.mc.on("hammer.input", function (ev) {
                 if (ev.isFinal) {
@@ -56,20 +52,23 @@ var hallmark;
         };
         ImageDrag.prototype.onRotate = function (ev) {
             //this.mc.off("pinchstart pinchmove");
-            console.log(this.model.getAngle() + ev.rotation);
-            this.model.setAngle(this.model.getAngle() + ev.rotation);
-            this.requestElementUpdate();
+            // console.log(this.model.getAngle() + ev.rotation);
+            // this.model.setAngle (this.model.getAngle() + ev.rotation);
+            // this.requestElementUpdate();
         };
-        /////////////////////////////
         ImageDrag.prototype.onPinchStart = function (evt) {
+            this.startScale = evt.scale;
+            console.log('start scale ' + this.startScale);
         };
         ImageDrag.prototype.onPinchEnd = function (evt) {
         };
         ImageDrag.prototype.onPinch = function (ev) {
             //this.mc.off("rotatestart rotatemove");
-            var scale = Math.max(1, Math.min((this.model.getScale() * ev.scale), 3));
-            console.log(scale);
-            this.model.setScale(scale);
+            var scale = this.startScale * ev.scale;
+            console.log('onPinch ' + scale);
+            // var scale = Math.max( 1, Math.min((this.model.getScale() * ev.scale), 3));
+            //console.log(scale);
+            // this.model.setScale (scale);
             this.requestElementUpdate();
         };
         ////////////////////////////////////////////////////////////////////
@@ -92,7 +91,7 @@ var hallmark;
             var offset = this.model.getOffset();
             this.startX = offset.x;
             this.startY = offset.y;
-            this.removeSwipes();
+            // this.removeSwipes();
         };
         ImageDrag.prototype.onPan = function (ev) {
             this.currentX = this.startX + ev.deltaX;
@@ -104,7 +103,7 @@ var hallmark;
                 this.requestElementUpdate();
         };
         ImageDrag.prototype.onPanEnd = function (ev) {
-            this.addSwipes();
+            // this.addSwipes();
         };
         /*onPinchRotate(ev:HammerInput):void {
             this.mc.on("rotatestart rotatemove");

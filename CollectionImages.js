@@ -30,7 +30,7 @@ var hallmark;
         CollectionImages.prototype.loadData = function (url) {
             var _this = this;
             $.get(url).done(function (res) {
-                console.log(res);
+                // console.log(res)
                 var server = _this.options.server;
                 var out = [];
                 for (var i = 0, n = res.length; i < n; i++) {
