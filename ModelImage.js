@@ -105,6 +105,7 @@ var hallmark;
         ModelImage.prototype.loadImage = function () {
             var _this = this;
             var img = new Image();
+            // img.crossOrigin = "anonymous";
             img.src = this.thumb;
             var size = ModelImage.thumbSize;
             img.onload = function (event) {
@@ -114,6 +115,7 @@ var hallmark;
                 if (w < h)
                     s = size / h;
                 var bmp = new createjs.Bitmap(img);
+                //   bmp.cache( 0, 0,size, size);
                 bmp.name = 'bmp';
                 bmp.scaleX = s;
                 bmp.scaleY = s;
@@ -122,6 +124,11 @@ var hallmark;
                 bmp.x = (size - w) / 2;
                 bmp.y = (size - h) / 2;
                 _this.canvasView.addChild(bmp);
+                var sh = new Shape();
+                sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
+                sh.alpha = 0.5;
+                _this.canvasView.addChild(sh);
+                _this.canvasView.mouseChildren = false;
                 _this.canvasView.cache(0, 0, size, size);
                 ModelImage.trigger.triggerHandler(ModelImage.IMAGE_LOADED);
             };

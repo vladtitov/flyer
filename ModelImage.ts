@@ -155,14 +155,21 @@ module hallmark{
 
         loadImage():void{
             var img = new Image();
+          // img.crossOrigin = "anonymous";
             img.src = this.thumb;
+
             var size = ModelImage.thumbSize;
+
             img.onload = (event)=> {
+
                 var w = img.naturalWidth;
                 var h = img.naturalHeight;
                 var s:number = size / w;
                 if (w < h) s = size / h;
+
                 var bmp:createjs.Bitmap = new createjs.Bitmap(img);
+             //   bmp.cache( 0, 0,size, size);
+
                 bmp.name='bmp';
                 bmp.scaleX = s;
                 bmp.scaleY = s;
@@ -171,6 +178,12 @@ module hallmark{
                 bmp.x = (size - w) / 2;
                 bmp.y = (size - h) / 2;
                 this.canvasView.addChild(bmp);
+                var sh:Shape = new Shape();
+
+                sh.graphics.beginFill('#FFFFFF').drawRect(0, 0, size, size);
+sh.alpha=0.5;
+                this.canvasView.addChild(sh);
+                this.canvasView.mouseChildren = false;
                 this.canvasView.cache(0, 0, size, size);
                 ModelImage.trigger.triggerHandler (ModelImage.IMAGE_LOADED);
 

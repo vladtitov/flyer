@@ -42,10 +42,14 @@ module hallmark {
   
         private loadData(url:string):void{
             $.get(url).done((res)=>{
-                //this.images.resolve(res);
+             console.log(res)
+                var server= this.options.server;
                 var out:ModelImage[]=[];
                 for (var i = 0, n = res.length; i < n; i++) {
-                    var image = new ModelImage(res[i]);
+                    var raw:ModelImage = res[i];
+                    raw.thumb = server+raw.thumb;
+                    raw.large = server+raw.large;
+                    var image = new ModelImage(raw);
                     out.push(image);
                 }
                 this.data = out;

@@ -30,10 +30,14 @@ var hallmark;
         CollectionImages.prototype.loadData = function (url) {
             var _this = this;
             $.get(url).done(function (res) {
-                //this.images.resolve(res);
+                console.log(res);
+                var server = _this.options.server;
                 var out = [];
                 for (var i = 0, n = res.length; i < n; i++) {
-                    var image = new hallmark.ModelImage(res[i]);
+                    var raw = res[i];
+                    raw.thumb = server + raw.thumb;
+                    raw.large = server + raw.large;
+                    var image = new hallmark.ModelImage(raw);
                     out.push(image);
                 }
                 _this.data = out;

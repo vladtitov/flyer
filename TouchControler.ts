@@ -51,6 +51,7 @@ import Container = createjs.Container;
     init () {
 
         this.view.addEventListener('mousedown', (evt:any)=> {
+
             this.isMove = false;
           //  this.isHold = false;
             this.pointerid = evt.pointerID;

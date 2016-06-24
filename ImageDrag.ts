@@ -71,8 +71,14 @@ module hallmark {
             this.mc.on("panmove", (evt) => this.onPan(evt));
             this.mc.on("panstart", (evt) => this.onPanStart(evt));
             this.mc.on("panend", (evt) => this.onPanEnd(evt));
-            this.mc.on("pinchstart pinchmove", (evt) => this.onPinch(evt));
-            //this.mc.on("rotatestart rotatemove", (evt) => this.onRotate (evt));
+
+            this.mc.on("pinchmove", (evt) => this.onPinch(evt));
+            this.mc.on("pinchstart", (evt) => this.onPinchStart(evt));
+            this.mc.on("pinchend", (evt) => this.onPinchEnd(evt));
+
+            this.mc.on("rotatestart", (evt) => this.onRotate (evt));
+            this.mc.on("rotatemove", (evt) => this.onRotate (evt));
+            this.mc.on("rotateend", (evt) => this.onRotate (evt));
             //this.mc.on("pinchend rotatenend", (evt) => this.onPinchRotate(evt));
 
             this.mc.on("hammer.input", (ev)=> {
@@ -81,7 +87,38 @@ module hallmark {
                 }
             });
         }
+/////////////////////////////////////////////////
+        onRotateStart(evt:HammerInput):void{
 
+        }
+        onRotateEnd(evt:HammerInput):void{
+
+        }
+        onRotate(ev:HammerInput):void {
+            //this.mc.off("pinchstart pinchmove");
+            console.log(this.model.getAngle() + ev.rotation);
+            this.model.setAngle (this.model.getAngle() + ev.rotation);
+            this.requestElementUpdate();
+        }
+/////////////////////////////
+        onPinchStart(evt:HammerInput):void{
+
+        }
+        
+        onPinchEnd(evt:HammerInput):void{
+
+        }
+
+        onPinch(ev:HammerInput):void {
+            //this.mc.off("rotatestart rotatemove");
+            var scale = Math.max( 1, Math.min((this.model.getScale() * ev.scale), 3));
+            console.log(scale);
+            this.model.setScale (scale);
+            this.requestElementUpdate();
+        }
+
+
+        ////////////////////////////////////////////////////////////////////
         hammerEnd ():void {
             this.mc.destroy();
             this.mc = null;
@@ -118,20 +155,7 @@ module hallmark {
             this.addSwipes();
         }
 
-        onPinch(ev:HammerInput):void {
-            //this.mc.off("rotatestart rotatemove");
-            var scale = Math.max( 1, Math.min((this.model.getScale() * ev.scale), 3));
-            console.log(scale);
-            this.model.setScale (scale);
-            this.requestElementUpdate();
-        }
 
-        onRotate(ev:HammerInput):void {
-            //this.mc.off("pinchstart pinchmove");
-            console.log(this.model.getAngle() + ev.rotation);
-            this.model.setAngle (this.model.getAngle() + ev.rotation);
-            this.requestElementUpdate();
-        }
 
         /*onPinchRotate(ev:HammerInput):void {
             this.mc.on("rotatestart rotatemove");
