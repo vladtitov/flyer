@@ -6,7 +6,6 @@
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="ImagesColumn.ts"/>
-///<reference path="ImagesLibrary.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;

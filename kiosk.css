@@ -5,21 +5,22 @@
 
 #shopcart {
     float:left;
+    background-image: url("shopingcart_button.png");
+    width: 88px;
+    height: 102px;
 }
 
 button {
     padding: 0;
     border: 0;
     margin: 0 5px;
+    background-color: #3c763d;
+    outline: 0px;
 }
 
 #shopcart_container {
-    height: 100px;
-}
-
-#mainview {
-    border: 2px solid #000;
-
+    margin: 5px 0;
+    height: 107px;
 }
 
 .clear {
@@ -27,8 +28,12 @@ button {
 }
 
 #coupon {
-    height: 40px;
-    text-align: center;
+    margin: 5px 0;
+    height: 90px;
+    background-image: url("coupon.jpg");
+    background-repeat: no-repeat;
+    background-size: auto 100px;
+    background-position: center;
 }
 
 #overlay img {
@@ -36,24 +41,22 @@ button {
     position: absolute;
 }
 
-.spin {
-    margin: 10px 0;
+#spin_container {
     text-align: center;
 }
+
 #spin {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: red;
-    color: #ffffff;
-    border: 0px;
+    margin-top: 5px;
+    width: 98px;
+    height: 97px;
+    background-image: url("spin_button.png");
 }
 
 #shopcartitems {
     width: 210px;
     overflow-x: auto;
     overflow-y: hidden;
+    display: none;
 }
 
 #shopcartitems ul {
@@ -61,19 +64,18 @@ button {
     white-space: nowrap;
 }
 
-#shopcartitems li {
+#shopcartitems ul li {
     vertical-align: top;
     margin: 0 5px;
-    height: 90px;
-    width: 90px;
+    height: 102px;
+    width: 102px;
     white-space: nowrap;
     display: inline-block;
     text-align: center;
 }
 
-#shopcartitems li>img{
-    height: 90px;
-    position: static;
+#shopinglist li>img{
+    height: 102px;
 }
 
 #overlay {
@@ -87,5 +89,32 @@ button {
 }
 
 .removeimage {
-    transform: translateY(100%);
+    transform: translateY(120%);
+}
+
+.arrow {
+    position: absolute;
+    top: 291px;
+}
+
+.left {
+    left:7px;
+
+}
+
+.right {
+    left:328px;
+    transform: scaleX(-1);
+}
+
+#wrapper {
+    margin-left: 5px;
+}
+
+#slots {
+    width: 356px;
+    height: 425px;
+    background-image: url("slots.png");
+    display:table-cell;
+    vertical-align:middle;
 }

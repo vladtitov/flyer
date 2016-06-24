@@ -4,20 +4,20 @@
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
-;
+///<reference path="ModelImage.ts"/>
 var hallmark;
 (function (hallmark) {
     var ShopingCart = (function () {
         function ShopingCart() {
             this.$list = $("#shopinglist");
         }
-        ShopingCart.prototype.addItem = function ($img) {
-            $img = $($img);
+        ShopingCart.prototype.addItem = function (model) {
+            model.resetElement().renderTransform();
+            var $img = model.$image;
             var cont = this.addPlaceHolder();
             cont.hide();
             cont.show("slow");
             var offset = this.$list.offset();
-            console.log(offset);
             $img.addClass("trans");
             $img.offset(offset);
             setTimeout(function () {
@@ -41,23 +41,20 @@ var hallmark;
         ShopingCart.prototype.addPlaceHolder = function () {
             return $("<li>").prependTo(this.$list);
         };
-        ShopingCart.prototype.ab = function () {
-            /*var $img = this.$image;
-            if (!$img) return;
-            if (this.currentX<100 && this.currentY>360 ) {
-                this.removeDrag ();
-                $img.animate ({opacity: 0.1, left:20, top: 450}, 1000);
-                $img.appendTo('#shopcartitems');
-                $img.addClass("item");
-                $img.animate ({opacity: 1}, 1000);
-                $('#shopcartitems').css("display","block");
-                $img.hammer().on("swipedown", (evt) => {
-                    console.log("SW");
-                    $img.remove();
-                    $img.off("swipedown");
-                });
-                this.reset ();
-            }*/
+        ShopingCart.prototype.showItem = function () {
+            $('#shopcartitems').css("display", "block");
+            $('#spin').css("display", "none");
+            $('#shopcart').unbind("click");
+        };
+        ShopingCart.prototype.toggleView = function () {
+            $('#shopcartitems').toggle();
+            $('#spin').toggle();
+        };
+        ShopingCart.prototype.toggleOn = function () {
+            $('#shopcart').click(function () {
+                $('#shopcartitems').toggle();
+                $('#spin').toggle();
+            });
         };
         return ShopingCart;
     }());

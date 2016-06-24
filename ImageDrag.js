@@ -4,100 +4,147 @@
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="typings/hammerjs/hammerjs.d.ts"/>
 ///<reference path="typings/jquery.d.ts"/>
-;
+///<reference path="ModelImage.ts"/>
+///<reference path="ShopingCart.ts"/>
 var hallmark;
 (function (hallmark) {
     var ImageDrag = (function () {
-        function ImageDrag($view) {
-            this.$view = $view;
+        function ImageDrag() {
+            this.ticking = false;
             this.trigger = $({});
             this.$overlay = $("#overlay");
         }
+        ImageDrag.prototype.reqAnimationFrame = function (callBack) {
+            /*return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };*/
+            requestAnimationFrame(function () { return callBack(); });
+        };
+        ;
+        ImageDrag.prototype.hammerStart = function () {
+            var _this = this;
+            if (this.model) {
+                this.img = this.model.imageClone;
+                this.$image = this.model.$image;
+            }
+            else
+                return;
+            this.mc = new Hammer.Manager(this.$image.get(0));
+            this.mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+            this.mc.add(new Hammer.Swipe()).recognizeWith(this.mc.get('pan'));
+            this.mc.add(new Hammer.Rotate({ threshold: 0 })).recognizeWith(this.mc.get('pan'));
+            this.mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(this.mc.get('pan'));
+            this.mc.on("panmove", function (evt) { return _this.onPan(evt); });
+            this.mc.on("panstart", function (evt) { return _this.onPanStart(evt); });
+            this.mc.on("panend", function (evt) { return _this.onPanEnd(evt); });
+            this.mc.on("pinchstart pinchmove", function (evt) { return _this.onPinch(evt); });
+            //this.mc.on("rotatestart rotatemove", (evt) => this.onRotate (evt));
+            //this.mc.on("pinchend rotatenend", (evt) => this.onPinchRotate(evt));
+            this.mc.on("hammer.input", function (ev) {
+                if (ev.isFinal) {
+                }
+            });
+        };
+        ImageDrag.prototype.hammerEnd = function () {
+            this.mc.destroy();
+            this.mc = null;
+        };
+        ImageDrag.prototype.updateElementTransform = function () {
+            this.ticking = false;
+            this.model.renderTransform();
+        };
+        ImageDrag.prototype.requestElementUpdate = function () {
+            var _this = this;
+            if (!this.ticking) {
+                this.reqAnimationFrame(function () { return _this.updateElementTransform(); });
+                this.ticking = true;
+            }
+        };
+        ImageDrag.prototype.onPanStart = function (ev) {
+            var offset = this.model.getOffset();
+            this.startX = offset.x;
+            this.startY = offset.y;
+            this.removeSwipes();
+        };
+        ImageDrag.prototype.onPan = function (ev) {
+            this.currentX = this.startX + ev.deltaX;
+            this.currentY = this.startY + ev.deltaY;
+            this.model.setOffset(this.currentX, this.currentY);
+            if (this.currentX < this.cartX && this.currentY > this.cartY)
+                this.trigger.triggerHandler('ON_CART');
+            else
+                this.requestElementUpdate();
+        };
+        ImageDrag.prototype.onPanEnd = function (ev) {
+            this.addSwipes();
+        };
+        ImageDrag.prototype.onPinch = function (ev) {
+            //this.mc.off("rotatestart rotatemove");
+            var scale = Math.max(1, Math.min((this.model.getScale() * ev.scale), 3));
+            console.log(scale);
+            this.model.setScale(scale);
+            this.requestElementUpdate();
+        };
+        ImageDrag.prototype.onRotate = function (ev) {
+            //this.mc.off("pinchstart pinchmove");
+            console.log(this.model.getAngle() + ev.rotation);
+            this.model.setAngle(this.model.getAngle() + ev.rotation);
+            this.requestElementUpdate();
+        };
+        /*onPinchRotate(ev:HammerInput):void {
+            this.mc.on("rotatestart rotatemove");
+            this.mc.on("pinchstart pinchmove");
+        }*/
+        ImageDrag.prototype.onSwipeRightLeft = function (ev) {
+            var x = this.$image.offset().left - 100;
+            if (ev.type == "swiperight")
+                x += 200;
+            this.$image.animate({ left: x });
+            this.model.removeDragImage();
+            this.reset();
+            this.shopingCart.toggleOn();
+        };
         ImageDrag.prototype.addSwipes = function () {
             var _this = this;
-            var $img = this.$image;
-            if (!$img)
-                return;
-            this.hammer = new Hammer($img.get(0));
-            this.hammer.on("swiperight swipeleft", function (evt) {
-                _this.hammer.off("swiperight swipeleft");
-                var x = $img.offset().left - 100;
-                if (evt.type == "swiperight")
-                    x += 200;
-                $img.animate({ opacity: 0.1, left: x });
-                setTimeout(function () {
-                    $img.remove();
-                }, 1500);
-            });
+            this.mc.on("swiperight swipeleft", function (evt) { return _this.onSwipeRightLeft(evt); });
         };
-        ImageDrag.prototype.addDrag = function () {
-            var _this = this;
-            var $img = this.$image;
-            if (!$img)
-                return;
-            this.reset();
-            $(document).on("touchmove", function (evt) { return _this.onMouseMove(evt); });
-            $(document).on("touchend touchcancel", function (evt) {
-                $(document).off("touchmove touchend touchcancel");
-                $img.on('touchstart', function (evt) { return _this.addDrag(); });
-                _this.addSwipes();
-            });
+        ImageDrag.prototype.removeSwipes = function () {
+            this.mc.off("swiperight swipeleft");
         };
         ImageDrag.prototype.dragOnCart = function () {
-            var $img = this.$image;
-            this.hammer.off("swiperight swipeleft");
-            $(document).off("touchmove touchend touchcancel");
-            this.trigger.triggerHandler("DRAG_ON_CART", $img);
+            this.trigger.triggerHandler("DRAG_ON_CART", this.model);
+            this.shopingCart.toggleOn();
             this.reset();
         };
-        ImageDrag.prototype.removeListeners = function () {
+        ImageDrag.prototype.removeDrag = function () {
+            $(document).off("touchmove");
         };
-        ImageDrag.prototype.reset = function () {
+        ImageDrag.prototype.resetXY = function () {
             this.startX = 0;
             this.startY = 0;
             this.mouseStartX = 0;
             this.mouseStartY = 0;
         };
-        ImageDrag.prototype.clear = function () {
+        ImageDrag.prototype.reset = function () {
+            this.model = null;
+            this.resetXY();
+            if (this.mc) {
+                this.hammerEnd();
+            }
+            $(document).off("touchmove touchend touchcancel");
+        };
+        ImageDrag.prototype.setImage = function (model) {
+            if (this.model)
+                this.model.removeDragImage();
             this.reset();
-            if (this.$image) {
-                var $im = this.$image;
-                $im.animate({ opacity: 0.1 }, 500, function () {
-                    $im.remove();
-                });
-            }
-        };
-        ImageDrag.prototype.onMouseMove = function (evt) {
-            var $img = this.$image;
-            if (!$img)
-                return;
-            var touch = evt.originalEvent.touches[0];
-            if (this.mouseStartX == 0) {
-                var offset = $img.offset();
-                this.startX = offset.left;
-                this.startY = offset.top;
-                this.mouseStartX = touch.clientX;
-                this.mouseStartY = touch.clientY;
-                return;
-            }
-            var dX = touch.clientX - this.mouseStartX;
-            var dY = touch.clientY - this.mouseStartY;
-            this.currentX = this.startX + dX;
-            this.currentY = this.startY + dY;
-            $img.offset({ left: this.currentX, top: this.currentY });
-            if (this.currentX < 100 && this.currentY > 360) {
-                this.dragOnCart();
-            }
-        };
-        ImageDrag.prototype.setImage = function ($img) {
-            this.clear();
-            this.$overlay.append($img);
-            var off = this.$view.offset();
-            off.left += $img.data('x');
-            off.top += $img.data('y');
-            $img.offset(off);
-            this.$image = $img;
-            this.addDrag();
+            //model.setDefaultOffcet(this.$view.offset());
+            this.model = model;
+            this.model.resetElement();
+            this.$overlay.children().triggerHandler('remove_me');
+            this.model.appendToDrag(this.$overlay);
+            this.model.renderTransform();
+            this.hammerStart();
+            this.addSwipes();
         };
         return ImageDrag;
     }());

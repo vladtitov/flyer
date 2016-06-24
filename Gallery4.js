@@ -5,7 +5,7 @@
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="ImagesColumn.ts"/>
-///<reference path="ImagesLibrary.ts"/>
+///<reference path="CollectionImages.ts"/>
 ///<reference path="ImageView.ts"/>
 ///<reference path="ImageDrag.ts"/>
 ///<reference path="ShopingCart.ts"/>
@@ -18,29 +18,30 @@ var hallmark;
     }());
     hallmark.ImagesRowOpt = ImagesRowOpt;
     var Gallery4 = (function () {
-        function Gallery4($view, options) {
+        function Gallery4(options) {
             var _this = this;
-            this.$view = $view;
-            this.drag = new hallmark.ImageDrag($view);
+            this.options = options;
+            this.canvasView = $("#canvasview");
+            hallmark.ModelImage.canvacView = this.canvasView;
+            this.drag = new hallmark.ImageDrag();
+            this.drag.trigger.on('ON_CART', function () { return _this.drag.dragOnCart(); });
+            this.drag.cartX = 90;
+            this.drag.cartY = 435;
             this.shopingCart = new hallmark.ShopingCart;
-            this.drag.trigger.on("DRAG_ON_CART", function (evt, img) { return _this.shopingCart.addItem(img); });
+            this.drag.shopingCart = this.shopingCart;
+            this.drag.trigger.on("DRAG_ON_CART", function (evt, model) { return _this.shopingCart.addItem(model); });
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
-            $view.append(canv);
+            this.canvasView.append(canv);
             this.stage = new createjs.Stage(canv);
             //this.data = data;
-            this.imagesLibrary = new hallmark.ImagesLibrary(options);
-            var count = 0;
-            hallmark.ImagesLibrary.trigger.on("IMAGE_LOADED", function () {
-                if (count++ > 50) {
-                    hallmark.ImagesLibrary.trigger.off("IMAGE_LOADED");
-                    _this.createColumn(options);
-                }
-                ;
+            this.imagesLibrary = new hallmark.CollectionImages(options);
+            this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50, function () {
+                _this.createColumns(options);
             });
             /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
-                 var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
+                 var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
                  if(img) this.preview.showImage(DO,img);
                  this.stage.addChild(this.preview.view);
              }*/
@@ -66,26 +67,30 @@ var hallmark;
         element.addEventListener('click', (evt:MouseEvent)=> {
             move (20);
         });*/
-        Gallery4.prototype.createColumn = function (options) {
+        Gallery4.prototype.dragedOnCart = function () {
+            var model = this.drag.model;
+            this.drag.reset();
+        };
+        Gallery4.prototype.createColumns = function (options) {
             var _this = this;
-            //createjs.EventDispatcher.initialize(ImagesColumn.prototype);
             for (var i = 0; i < 3; i++) {
                 var column = new hallmark.ImagesColumn(this.imagesLibrary, options, i);
-                column.setPosition(i * 100 + 5, 10);
+                column.setPosition(i * 106 + 22, 0);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
-                column.addEventListener('IMAGE_SELECTED', function (evt) { return _this.onImageSelected(evt); });
+                column.on('selected', function (evt, model) { return _this.onImageSelected(model); });
             }
         };
-        Gallery4.prototype.onImageSelected = function (evt) {
-            this.drag.setImage(evt.data);
+        Gallery4.prototype.onImageSelected = function (model) {
+            this.shopingCart.showItem();
+            this.drag.setImage(model);
         };
         return Gallery4;
     }());
     hallmark.Gallery4 = Gallery4;
     var App = (function () {
-        function App($view, opt) {
-            this.gallery = new hallmark.Gallery4($view, opt);
+        function App(opt) {
+            this.gallery = new hallmark.Gallery4(opt);
         }
         return App;
     }());
@@ -93,15 +98,17 @@ var hallmark;
 })(hallmark || (hallmark = {}));
 $(document).ready(function () {
     console.log($(window).width() + 'x' + $(window).height());
-    var width = $(window).width();
-    var height = $(window).height() - 230;
+    var width = $('#slots').width();
+    var height = 320;
     $('#shopcart').click(function () {
         $('#shopcartitems').toggle();
+        $('#spin').toggle();
     });
     var options = {
         canvasWidth: width,
         canvasHeight: height,
-        url: 'getimages.php',
+        server: 'http://192.168.0.102/GitHub/flyer/',
+        getimages: 'getimages.php',
         thumbSize: 100,
         thumbDistance: 110,
         rowHeight: height,
@@ -115,6 +122,6 @@ $(document).ready(function () {
         previewWidth: width - 20,
         previewHeight: height - 20
     };
-    var gal = new hallmark.App($('#mainview'), options);
+    var gal = new hallmark.App(options);
 });
 //# sourceMappingURL=Gallery4.js.map

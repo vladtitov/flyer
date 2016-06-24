@@ -29,25 +29,32 @@
         <div id="coupon">
 
         </div>
-        <div id="slots">
-            <section id="mainview" >
+        <div id="wrapper">
+            <div id="slots">
+                <img class="arrow left" src="arrow.png">
+                <img class="arrow right" src="arrow.png">
+                <section id="canvasview" >
 
-            </section>
-            <div class="spin">
-                    <button id="spin" name="spin">SPIN</button>
+                </section>
             </div>
         </div>
         <div id="shopcart_container">
-            <button id="shopcart" name="shopcart"><img src="shoping.png" width="90px" height="90px"></button>
+            <button id="shopcart" name="shopcart"></button>
+            <div id="spin_container">
+                <button id="spin" name="spin"></button>
+            </div>
             <div id="shopcartitems">
                 <ul id="shopinglist"></ul>
             </div>
         </div>
     </div>
+
     <div id="overlay"></div>
 
     <script src="ImageView.js"></script>
-    <script src="ImagesLibrary.js"></script>
+    <script src="ModelImage.js"></script>
+    <script src="CollectionImages.js"></script>
+
     <script src="ImagesColumn.js"></script>
     <script src="ImageDrag.js"></script>
     <script src="TouchControler.js"></script>

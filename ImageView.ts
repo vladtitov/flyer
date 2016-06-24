@@ -7,7 +7,7 @@
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="ImagesColumn.ts"/>
-///<reference path="ImagesLibrary.ts"/>
+
     
     
 namespace hallmark{
@@ -20,6 +20,8 @@ namespace hallmark{
     import MouseEvent = createjs.MouseEvent;
     import Container = createjs.Container;
     import Shape = createjs.Shape;
+    
+    
     
     export class ImageView{
 
@@ -112,7 +114,7 @@ namespace hallmark{
             this.view.parent.removeChild(this.view)
         }
 
-        showImage(DO:DisplayObject,source:ImageHolder) {
+        showImage(DO:DisplayObject,source:ModelImage) {
             this.start();
             this.view.removeAllChildren();
             DO = DO.parent;

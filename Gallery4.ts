@@ -5,7 +5,7 @@
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
 ///<reference path="ImagesColumn.ts"/>
-///<reference path="ImagesLibrary.ts"/>
+///<reference path="CollectionImages.ts"/>
 ///<reference path="ImageView.ts"/>
 ///<reference path="ImageDrag.ts"/>
 ///<reference path="ShopingCart.ts"/>
@@ -57,32 +57,35 @@ namespace hallmark{
         stage:createjs.Stage;
         //data:VOImage[];
         isWebGL:boolean;
-        imagesLibrary:ImagesLibrary;
+        imagesLibrary:CollectionImages;
         private current:number;
         private preview:ImagePreview;
         private drag:ImageDrag;
         private shopingCart:ShopingCart;
-        constructor(private $view:JQuery, options:any){
-            this.drag = new ImageDrag ($view);
+        private canvasView:JQuery;
+        constructor(private options:any){
+            this.canvasView =$("#canvasview");
+            ModelImage.canvacView = this.canvasView;
+            this.drag = new ImageDrag ();
+            this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
+            this.drag.cartX = 90;
+            this.drag.cartY = 435;
             this.shopingCart = new ShopingCart;
-            this.drag.trigger.on ("DRAG_ON_CART", (evt, img) => this.shopingCart.addItem(img));
+            this.drag.shopingCart = this.shopingCart;
+            this.drag.trigger.on ("DRAG_ON_CART", (evt, model) => this.shopingCart.addItem(model));
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
             canv.height = options.canvasHeight;
-            $view.append(canv);
+            this.canvasView.append(canv);
             this.stage = new createjs.Stage(canv);
             //this.data = data;
-            this.imagesLibrary = new ImagesLibrary(options);
-            var count = 0;
-            ImagesLibrary.trigger.on ("IMAGE_LOADED", () => {
-               if (count++ >50) {
-                   ImagesLibrary.trigger.off ("IMAGE_LOADED");
-                   this.createColumn(options);
-               };
-            });
+            this.imagesLibrary = new CollectionImages(options);
+             this.imagesLibrary.trigger.on(this.imagesLibrary.GOT_50,()=>{
+                 this.createColumns(options);
+             })
   
            /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
-                var img:ImageHolder =  this.imagesLibrary.getImageByReference(DO);
+                var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
                 if(img) this.preview.showImage(DO,img);
                 this.stage.addChild(this.preview.view);
             }*/
@@ -113,16 +116,21 @@ namespace hallmark{
         element.addEventListener('click', (evt:MouseEvent)=> {
             move (20);
         });*/
-        
-        createColumn(options):void{
 
-            //createjs.EventDispatcher.initialize(ImagesColumn.prototype);
+        private dragedOnCart():void{
+            var model:ModelImage = this.drag.model;
+            this.drag.reset();
+        }
+        
+        createColumns(options):void{
+          
             for(var i=0; i<3; i++) {
                 var column:ImagesColumn = new ImagesColumn(this.imagesLibrary,options,i);
-                column.setPosition(i*100+5, 10);
+                column.setPosition(i*106+22, 0);
                 //column.createBackground('#3c763d');
                 this.stage.addChild(column.view);
-               column.addEventListener('IMAGE_SELECTED', (evt:any)=> this.onImageSelected(evt))
+                column.on('selected',(evt,model:ModelImage)=> this.onImageSelected(model));
+              // column.tr
                 //column.view.addEventListener("IMAGE_SELECTED", (evt)=> this.onImageSelected(evt));
                // column.onImageSelected = (img) => this.onImageSelected(img);
 
@@ -130,9 +138,9 @@ namespace hallmark{
 
         }
 
-        private onImageSelected (evt:createjs.Event) {     
-            
-           this.drag.setImage(evt.data);
+        private onImageSelected (model:ModelImage) {
+            this.shopingCart.showItem ();
+            this.drag.setImage(model);
         }
     }
 
@@ -145,8 +153,8 @@ namespace hallmark{
     export class App{
         //images:JQueryDeferred<VOImage[]>;
         gallery:Gallery4;
-        constructor($view:JQuery,opt:any){
-            this.gallery = new hallmark.Gallery4($view, opt);
+        constructor(opt:any){
+            this.gallery = new hallmark.Gallery4(opt);
         }
     }
 }
@@ -156,11 +164,12 @@ namespace hallmark{
 
 $(document).ready(function(){
     console.log($(window ).width()+'x'+$(window ).height());
-    var width  = $(window ).width();
-    var height  = $(window ).height()-230;
-
+    var width  = $('#slots').width();
+    var height  = 320;
+    
     $('#shopcart').click(function(){
         $('#shopcartitems').toggle();
+        $('#spin').toggle();
     });
 
 
@@ -170,7 +179,8 @@ $(document).ready(function(){
     var options={
         canvasWidth:width,
         canvasHeight:height,
-        url:'getimages.php',
+        server:'http://192.168.0.102/GitHub/flyer/',
+        getimages:'getimages.php',
         thumbSize:100,
         thumbDistance:110,
         rowHeight: height,
@@ -185,6 +195,6 @@ $(document).ready(function(){
         previewHeight:height-20
     }
 
-    var gal = new hallmark.App($('#mainview'),options);
+    var gal = new hallmark.App(options);
 })
 
