@@ -53,8 +53,58 @@ module hallmark {
         };
 
 
+        on1Touch():void{
+            this.dragControl.onPanStart = ()=>{
+                this.startP = this.model.getOffset();
+                console.log(this.startP);
+            }
+            this.dragControl.onPan = (dx:number,dy:number)=>{
+                this.model.setOffset(this.startP.x-dx,this.startP.y-dy);
+            }
+
+            this.dragControl.onScaleStart = ()=>{ }
+            this.dragControl.onScale = (k:number)=>{}
+            this.dragControl.onCenterStart = ()=>{ }
+            this.dragControl.onCenterChange = (dp:{dx:number,dy:number})=>{}
+        }
+
+        on2Touches():void{
+
+            this.dragControl.onPanStart = ()=>{
+
+            }
+            this.dragControl.onPan = (dx:number,dy:number)=>{
+
+            }
+            this.dragControl.onScaleStart = ()=>{
+                this.startScale = this.model.getScale();
+            }
+            this.dragControl.onScale = (k:number)=>{
+                this.model.setScale(this.startScale*k);
+            }
+            this.dragControl.onCenterStart = ()=>{
+                this.centerStart = this.model.getCenter();
+                console.log(this.centerStart)
+
+            }
+            this.dragControl.onCenterChange = (dp:{dx:number,dy:number})=>{
+
+              /*  if(this.centerStart){
+                    var p:{x:number;y:number} = {
+                        x:this.centerStart.x - dp.dx,
+                        y:this.centerStart.y - dp.dy
+                    }
+                    this.model.setCenter(p);
+                    this.centerStart = null;
+                }
+*/
+            }
+
+        }
 
 
+
+        centerStart:{x:number;y:number};
         dragControl:DragControl
 
         startP:{x:number,y:number};
@@ -71,19 +121,11 @@ module hallmark {
             this.model.renderTransform();
             this.dragControl = new DragControl(model.imageClone);
             this.dragControl.start();
-            this.dragControl.onPanStart = ()=>{
-               this.startP = this.model.getOffset();
-            }
-            this.dragControl.onPan = (dx:number,dy:number)=>{
-                this.model.setOffset(this.startP.x-dx,this.startP.y-dy);
-            }
+            this.dragControl.on1touch = ()=>this.on1Touch();
+            this.dragControl.on2touches =()=>this.on2Touches();
 
-            this.dragControl.onScaleStart = ()=>{
-                this.startScale = this.model.getScale();
-            }
-            this.dragControl.onScale = (k:number)=>{
-                this.model.setScale(this.startScale*k);
-            }
+
+
         }
     }
 }

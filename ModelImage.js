@@ -9,6 +9,8 @@ var hallmark;
     var ModelImage = (function () {
         function ModelImage(vo) {
             this.vo = vo;
+            this.centerX = 100;
+            this.centerY = 100;
             this.transformType = "transform";
             for (var str in vo)
                 this[str] = vo[str];
@@ -70,10 +72,14 @@ var hallmark;
             this.$image.appendTo($cont);
             return this;
         };
+        /////////////////////
         ModelImage.prototype.setOffset = function (x, y) {
             this.transform.translate.x = x;
             this.transform.translate.y = y;
             this.requestElementUpdate();
+        };
+        ModelImage.prototype.getOffset = function () {
+            return { x: this.transform.translate.x, y: this.transform.translate.y };
         };
         ModelImage.prototype.updateElementTransform = function () {
             this.ticking = false;
@@ -93,8 +99,13 @@ var hallmark;
                 this.ticking = true;
             }
         };
-        ModelImage.prototype.getOffset = function () {
-            return { x: this.transform.translate.x, y: this.transform.translate.y };
+        ModelImage.prototype.getCenter = function () {
+            return { x: this.transform.rx, y: this.transform.ry };
+        };
+        ModelImage.prototype.setCenter = function (p) {
+            this.centerX = p.x;
+            this.centerY = p.y;
+            this.imageClone.style.transformOrigin = this.centerX + 'px ' + this.centerY + 'px';
         };
         ModelImage.prototype.renderTransform = function () {
             var value_array = [

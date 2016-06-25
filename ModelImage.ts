@@ -110,13 +110,18 @@ module hallmark{
             this.$image.appendTo($cont);
             return this;
         }
-
+/////////////////////
         setOffset(x:number, y:number) {
             this.transform.translate.x = x;
             this.transform.translate.y = y;
             this.requestElementUpdate();
         }
 
+        getOffset (): {x:number; y:number} {
+            return {x:this.transform.translate.x, y: this.transform.translate.y};
+        }
+
+        /////////////////
         ticking:boolean;
         updateElementTransform():void {
             this.ticking = false;
@@ -135,8 +140,17 @@ module hallmark{
             }
         }
 
-        getOffset (): {x:number; y:number} {
-            return {x:this.transform.translate.x, y:this.transform.translate.y};
+
+        getCenter():{x:number;y:number}{
+            return {x:this.transform.rx,y:this.transform.ry};
+        }
+
+        centerX:number=100;
+        centerY:number=100;
+        setCenter(p:{x:number;y:number}):void{
+            this.centerX = p.x;
+            this.centerY = p.y;
+            this.imageClone.style.transformOrigin = this.centerX+'px '+this.centerY+'px';
         }
 
         private transformType:string = "transform";
@@ -150,6 +164,7 @@ module hallmark{
 
              var value:string = value_array.join(" ");
              this.imageClone.style.webkitTransform = value;
+
              //this.image.style.mozTransform = value;
              //this.image.style[this.transformType] = value;
 
