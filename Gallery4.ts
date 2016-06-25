@@ -9,7 +9,7 @@
 
 ///<reference path="ShopingCart.ts"/>
 ///<reference path="drag/ImageDrag.ts"/>
-    
+
 
 
 
@@ -68,7 +68,7 @@ namespace hallmark{
             this.canvasView =$("#canvasview");
             ModelImage.canvacView = this.canvasView;
             this.drag = new ImageDrag ();
-            this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
+            //this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
             this.drag.cartX = 90;
             this.drag.cartY = 435;
             this.shopingCart = new ShopingCart;
@@ -120,7 +120,7 @@ namespace hallmark{
 
         private dragedOnCart():void{
             var model:ModelImage = this.drag.model;
-            this.drag.reset();
+           // this.drag.reset();
         }
         
         createColumns(options):void{
@@ -180,7 +180,7 @@ $(document).ready(function(){
     var options={
         canvasWidth:width,
         canvasHeight:height,
-        server:'http://localhost/GitHub/flyer/',
+        server:'http://192.168.1.12/GitHub/flyer/',
         getimages:'getimages.php',
         thumbSize:100,
         thumbDistance:110,

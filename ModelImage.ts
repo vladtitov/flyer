@@ -97,7 +97,8 @@ module hallmark{
         }
 
         appendToDrag($cont:JQuery):ModelImage{
-            this.$image = $(this.image).clone();
+
+            this.$image = $('<img>').attr('src',this.large);
             this.imageClone = this.$image.get(0);
             this.$image.on('remove_me',()=>this.removeDragImage());
             var off = ModelImage.canvacView.offset();
@@ -113,6 +114,25 @@ module hallmark{
         setOffset(x:number, y:number) {
             this.transform.translate.x = x;
             this.transform.translate.y = y;
+            this.requestElementUpdate();
+        }
+
+        ticking:boolean;
+        updateElementTransform():void {
+            this.ticking = false;
+            this.renderTransform();
+        }
+        reqAnimationFrame (callBack:Function) {
+            /*return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
+             window.setTimeout(callback, 1000 / 60);
+             };*/
+            requestAnimationFrame ( () => callBack ());
+        };
+        requestElementUpdate():void {
+            if(!this.ticking) {
+                this.reqAnimationFrame ( () => this.updateElementTransform ());
+                this.ticking = true;
+            }
         }
 
         getOffset (): {x:number; y:number} {
@@ -136,7 +156,8 @@ module hallmark{
         }
 
         setScale (scale:number) {
-            this.transform.scale = scale;
+          this.transform.scale = scale;
+            this.requestElementUpdate();
         }
 
         setAngle (angle:number) {
