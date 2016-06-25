@@ -126,12 +126,13 @@ import Container = createjs.Container;
 
     }
     
-    isSpin:boolean;       
+    isSpin:boolean;
             
     public spin (speed:number):void {
         this.isMove = true;
         this.isSpin = true; 
         this.speed = speed;
+        this.view.removeAllEventListeners();
         this.move(speed);
     }
 

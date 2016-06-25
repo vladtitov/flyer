@@ -1,6 +1,7 @@
 ﻿#container {
-    border: 4px double #000;
     background-color: #3c763d;
+    height: 100vh;
+    width: 100vw;
 }
 
 #shopcart {
@@ -47,9 +48,9 @@ button {
 
 #spin {
     margin-top: 5px;
-    width: 98px;
-    height: 97px;
-    background-image: url("spin_button.png");
+    width: 95px;
+    height: 95px;
+    background-image: url("btn_spin_normal.png");
 }
 
 #shopcartitems {
@@ -94,27 +95,54 @@ button {
 
 .arrow {
     position: absolute;
-    top: 291px;
-}
-
-.left {
-    left:7px;
-
+    top: 50%;
+    margin-top: -22px;
 }
 
 .right {
-    left:328px;
+    left:100%;
+    margin-left: -39px;
     transform: scaleX(-1);
-}
-
-#wrapper {
-    margin-left: 5px;
 }
 
 #slots {
     width: 356px;
     height: 425px;
     background-image: url("slots.png");
-    display:table-cell;
-    vertical-align:middle;
+    background-position: center center;
+    display:flex;
+    position: relative;
+    margin: 0 auto;
+}
+
+#canvasview {
+    position: relative;
+    margin: auto;
+}
+
+.shadow {
+    //position: absolute;
+    width: 90%;
+    height: 100%;
+    left:5%;
+    top:0;
+    background: -moz-linear-gradient(top,  rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.4) 100%);
+    background: -webkit-linear-gradient(top,  rgba(0,0,0,0.4) 0%,rgba(0,0,0,0) 25%,rgba(0,0,0,0) 75%,rgba(0,0,0,0.4) 100%);
+    background: linear-gradient(to bottom,  rgba(0,0,0,0.4) 0%,rgba(0,0,0,0) 25%,rgba(0,0,0,0) 75%,rgba(0,0,0,0.4) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66000000', endColorstr='#66000000',GradientType=0 );
+}
+
+@media screen and (orientation:landscape) {
+    #coupon {
+        display: none;
+    }
+
+    #shopcart_container {
+        float: left;
+    }
+
+    #slots {
+        float: left;
+        height: 100vh;
+    }
 }

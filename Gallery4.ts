@@ -11,7 +11,6 @@
 ///<reference path="ShopingCart.ts"/>
 
 
-
 declare var require:any;
 
     
@@ -68,8 +67,9 @@ namespace hallmark{
             ModelImage.canvacView = this.canvasView;
             this.drag = new ImageDrag ();
             this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
-            this.drag.cartX = 90;
-            this.drag.cartY = 435;
+            this.drag.cartX = $("#shopcart").offset().left;
+            this.drag.cartY = $("#shopcart").offset().top;
+            console.log(this.drag.cartX, this.drag.cartY);
             this.shopingCart = new ShopingCart;
             this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on ("DRAG_ON_CART", (evt, model) => this.shopingCart.addItem(model));
@@ -148,8 +148,9 @@ namespace hallmark{
                 if (item.isMove () ) stop = false;
             });
             if (stop) {
-                $('#spin').css("opacity", "1");
+                $('#spin').css("background-image", "url('btn_spin_normal.png')");
                 this.initSpin();
+                //this.touchControler.init();
             };
         };
         
@@ -160,6 +161,8 @@ namespace hallmark{
 
         initSpin ():void {
             $('#spin').click( () => {
+                $('#spin').css("background-image", "url('btn_spin_press.png')");
+                $('#spin').unbind("click");
                 this.collectionColumn.forEach( function (item:ImagesColumn) {
                     item.spin();
                 } );
@@ -172,9 +175,6 @@ namespace hallmark{
                 setTimeout( () => {
                     this.stopColumn(0);
                 },4000);
-                
-                $('#spin').css("opacity", "0.5");
-                $('#spin').unbind("click");
             });
         }
 
@@ -199,6 +199,13 @@ namespace hallmark{
                 $('#spin').toggle();
             });
         }
+
+        /*$(document).addEventListener('orientationchange', (evt)=> {
+            this.drag.cartX = $("#shopcart").offset().left;
+            this.drag.cartY = $("#shopcart").offset().top;
+        });*/
+
+
         
     }
 

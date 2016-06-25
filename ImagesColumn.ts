@@ -73,6 +73,11 @@ module hallmark {
                         else  this.friction = 0.95;
                     }else this.friction = 1;
 
+                    if (!this.touchControler.isSpin) {
+                       if (this.speed > 5 && this.speed < 20) this.friction = 0.995;
+                            else  this.friction = 0.95;
+                    }
+
                     this.touchControler.speed *= this.friction;
                     if (this.speed <5 && this.touchControler.isSpin) {
                         this.touchControler.isMove = false;

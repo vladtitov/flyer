@@ -13,6 +13,7 @@
     <link href="kiosk.css" rel="stylesheet" />
     <link href="libs/font-awesome.css" rel="stylesheet" type="text/css"/>
     <script src="libs/jquery-2.1.0.min.js"></script>
+    <script src="libs/bootstrap.min.js"></script>
     <script src="libs/hammer.min.js"></script>
     <script src="libs/jquery.hammer.js"></script>
     <script src="libs/createjs.min.js"></script>
@@ -26,17 +27,13 @@
 <body>
     <div id="Templates" class="hidden"> </div>
     <div id="container">
-        <div id="coupon">
-
-        </div>
-        <div id="wrapper">
-            <div id="slots">
-                <img class="arrow left" src="arrow.png">
-                <img class="arrow right" src="arrow.png">
-                <section id="canvasview" >
-
-                </section>
-            </div>
+        <div id="coupon"></div>
+        <div id="slots">
+            <img class="arrow left" src="arrow.png">
+            <img class="arrow right" src="arrow.png">
+            <section id="canvasview" >
+                <div class="shadow"></div>
+            </section>
         </div>
         <div id="shopcart_container">
             <button id="shopcart" name="shopcart"></button>

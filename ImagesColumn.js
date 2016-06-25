@@ -46,6 +46,12 @@ var hallmark;
                     }
                     else
                         _this.friction = 1;
+                    if (!_this.touchControler.isSpin) {
+                        if (_this.speed > 5 && _this.speed < 20)
+                            _this.friction = 0.995;
+                        else
+                            _this.friction = 0.95;
+                    }
                     _this.touchControler.speed *= _this.friction;
                     if (_this.speed < 5 && _this.touchControler.isSpin) {
                         _this.touchControler.isMove = false;

@@ -25,8 +25,9 @@ var hallmark;
             hallmark.ModelImage.canvacView = this.canvasView;
             this.drag = new hallmark.ImageDrag();
             this.drag.trigger.on('ON_CART', function () { return _this.drag.dragOnCart(); });
-            this.drag.cartX = 90;
-            this.drag.cartY = 435;
+            this.drag.cartX = $("#shopcart").offset().left;
+            this.drag.cartY = $("#shopcart").offset().top;
+            console.log(this.drag.cartX, this.drag.cartY);
             this.shopingCart = new hallmark.ShopingCart;
             this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on("DRAG_ON_CART", function (evt, model) { return _this.shopingCart.addItem(model); });
@@ -93,7 +94,7 @@ var hallmark;
                     stop = false;
             });
             if (stop) {
-                $('#spin').css("opacity", "1");
+                $('#spin').css("background-image", "url('btn_spin_normal.png')");
                 this.initSpin();
             }
             ;
@@ -106,6 +107,8 @@ var hallmark;
         Gallery4.prototype.initSpin = function () {
             var _this = this;
             $('#spin').click(function () {
+                $('#spin').css("background-image", "url('btn_spin_press.png')");
+                $('#spin').unbind("click");
                 _this.collectionColumn.forEach(function (item) {
                     item.spin();
                 });
@@ -118,8 +121,6 @@ var hallmark;
                 setTimeout(function () {
                     _this.stopColumn(0);
                 }, 4000);
-                $('#spin').css("opacity", "0.5");
-                $('#spin').unbind("click");
             });
         };
         Gallery4.prototype.stopColumn = function (num) {

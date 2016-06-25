@@ -98,6 +98,7 @@ var hallmark;
             this.isMove = true;
             this.isSpin = true;
             this.speed = speed;
+            this.view.removeAllEventListeners();
             this.move(speed);
         };
         TouchControler.prototype.onPressHold = function (evt) {

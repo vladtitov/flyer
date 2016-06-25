@@ -110,7 +110,8 @@ module hallmark {
             this.currentX = this.startX + ev.deltaX;
             this.currentY = this.startY + ev.deltaY;
             this.model.setOffset(this.currentX, this.currentY);
-            if (this.currentX < this.cartX && this.currentY > this.cartY) this.trigger.triggerHandler('ON_CART');
+            console.log(this.currentX, this.currentY);
+            if (this.currentX < this.cartX+85 && this.currentY > this.cartY-95 && this.currentX > this.cartX-55 && this.currentY < this.cartY+95) this.trigger.triggerHandler('ON_CART');
             else this.requestElementUpdate();
         }
 
