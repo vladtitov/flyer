@@ -25,63 +25,6 @@ var hallmark;
             this.listeners = {};
             this.reset();
         }
-        /* private handleMove(x:number, y:number):void {
-             if (this.isGestur){
-                 this.stopGestures();
-                 return;
-             }
-             if (!this.isMoving) {
-                 this.isMoving = true;
-                 this.startX = x;
-                 this.startY = y;
-                 this.DX = 0;
-                 this.DY = 0;
-                 this.prevX=x;
-                 this.prevY=y;
-                 if(this.ind){
-                     $('#Move').show();
-                     /// $('#Move').fadeOut('fast',()=>{$('#Move').fadeIn()});
-                 }
-                 if (this.onMoveStart)this.onMoveStart();
- 
-             } else {
- 
-                 this.DX = x - this.startX;
-                 this.DY = y - this.startY;
-                 if(this.ind){
-                     this.ind.css({left:this.DX,top:this.DY})
-                 }
-                 var dx = x - this.prevX;
-                 var dy = y - this.prevY;
-                 this.moveSpeed=Math.sqrt(dx*dx+dy*dy);
-                 this.prevX=x;
-                 this.prevY=y;
- 
-                 if (this.onMove)this.onMove(this.DX, this.DY);
-             }
- 
- 
-             //// console.log(this.moveX+'  '+this.moveY);
- 
-         }*/
-        DragControl.prototype.stopMoving = function () {
-            $('#Move').hide();
-            this.isMoving = false;
-            if (this.onMoveEnd)
-                this.onMoveEnd();
-        };
-        DragControl.prototype.stopGestures = function () {
-            $('#Gestur').hide();
-            this.isGestur = false;
-            if (this.onGestStop)
-                this.onGestStop();
-        };
-        DragControl.prototype.setCenter = function (x, y) {
-            // if(Math.abs(this.centerX-x) + Math.abs(this.centerY+y)>10){
-            this.centerX = x;
-            this.centerY = y;
-            //}
-        };
         DragControl.prototype.onTouchStart = function (evt) {
             var num = evt.touches;
             if (evt.touches.length == 1) {
@@ -150,8 +93,6 @@ var hallmark;
         DragControl.prototype.calculateOneTouch = function () {
             this.panCurrent = { x: this.touches[0].clientX, y: this.touches[0].clientY };
         };
-        DragControl.prototype.onScaleStart = function () {
-        };
         DragControl.prototype.onScale = function (num) {
         };
         DragControl.prototype.dispatcheScale = function () {
@@ -162,8 +103,6 @@ var hallmark;
             else {
                 this.onScale(this.distanceCurrent / this.distanceStart);
             }
-        };
-        DragControl.prototype.onCenterStart = function (p) {
         };
         DragControl.prototype.onCenterChange = function (dp) {
         };
@@ -205,11 +144,14 @@ var hallmark;
                 this.onLengthChanged(length);
             this.calculateMotions();
             if (this.length == 1) {
-                this.dispatchPan();
+                if (this.onPanStart)
+                    this.dispatchPan();
             }
             else {
-                this.dispatcheScale();
-                this.dispatchCenter();
+                if (this.onScaleStart)
+                    this.dispatcheScale();
+                if (this.onCenterStart)
+                    this.dispatchCenter();
             }
             // if (evt.touches.length == 1)this.handleMove(evt.touches[0].clientX, evt.touches[0].clientY);
             // else if (evt.touches.length == 2)this.handleGesture(evt.touches[0].clientX, evt.touches[0].clientY, evt.touches[1].clientX, evt.touches[1].clientY);

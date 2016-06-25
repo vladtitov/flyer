@@ -10,6 +10,18 @@ module hallmark{
     import Container = createjs.Container;
     import Shape = createjs.Shape;
     import Point = createjs.Point;
+   export interface P{
+        x:number;
+        y:number;
+    }
+    export interface Matr{
+        x:number;
+        y:number;
+        w:number;
+        h:number;
+        center:P;
+        scale:number;
+    }
 
     export interface VOImage {
         cats: string,
@@ -19,6 +31,10 @@ module hallmark{
         sale: boolean,
         thumb: string
         id:number;
+    }
+    
+    class ImageView{
+        
     }
 
     export class ModelImage {
@@ -117,8 +133,23 @@ module hallmark{
             this.requestElementUpdate();
         }
 
-        getOffset (): {x:number; y:number} {
+        getOffset (): P{
             return {x:this.transform.translate.x, y: this.transform.translate.y};
+        }
+        width:number =100;
+        height:number=100;
+        toGlobal():Matr{
+
+            //m.x-(m.center.x*m.scale)+m.center.x
+            return {
+                x:this.transform.translate.x-(this.centerCurrent.x*this.transform.scale)+this.centerCurrent.x,
+                y:this.transform.translate.y-(this.centerCurrent.y*this.transform.scale)+this.centerCurrent.y,
+                w:this.width*this.transform.scale,
+                h:this.height*this.transform.scale,
+                scale:this.transform.scale,
+                center:this.centerCurrent
+            }
+
         }
 
         /////////////////
@@ -140,22 +171,38 @@ module hallmark{
             }
         }
 
+        isCenter:boolean;
 
-        getCenter():{x:number;y:number}{
-            return {x:this.transform.rx,y:this.transform.ry};
+        getCenter():P{
+            return this.centerCurrent;
+        }
+        setCenter(x:number,y:number):void{
+            var dx:number = x-this.centerCurrent.x;
+            var dy:number = y-this.centerCurrent.y;
+            this.transform.translate.x+=(dx*this.transform.scale)-dx;
+            this.transform.translate.y+=(dy*this.transform.scale) - dy;
+            this.centerCurrent.x=x;
+            this.centerCurrent.y=y;
+            this.isCenter = true;
         }
 
-        centerX:number=100;
-        centerY:number=100;
-        setCenter(p:{x:number;y:number}):void{
-            this.centerX = p.x;
-            this.centerY = p.y;
-            this.imageClone.style.transformOrigin = this.centerX+'px '+this.centerY+'px';
+        centerCurrent:P={x:20,y:60};
+        centerNew:P={x:100,y:100};
+
+        setNewCenter(p:P):void{
+          this.centerNew = p;
         }
+
+
 
         private transformType:string = "transform";
 
+
         renderTransform () {
+            if(this.isCenter){
+                this.imageClone.style.transformOrigin = this.centerCurrent.x+'px '+this.centerCurrent.y+'px';
+                this.isCenter = false;
+            }
              var value_array:string [] = [
                 'translate3d(' + this.transform.translate.x + 'px, ' + this.transform.translate.y + 'px, 0)',
                  'scale(' + this.transform.scale + ', ' + this.transform.scale + ')',

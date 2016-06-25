@@ -27,7 +27,7 @@ module hallmark{
         centerX:number = 0;
         centerY:number = 0;
 
-        onMove:Function;
+       /* onMove:Function;
         onMoveStart:Function;
         onMoveEnd:Function;
 
@@ -38,7 +38,7 @@ module hallmark{
 
         isMoving:boolean;
         isGestur:boolean;
-
+*/
 
 
 
@@ -91,7 +91,7 @@ module hallmark{
 
         }*/
 
-        private stopMoving():void {
+        /*private stopMoving():void {
             $('#Move').hide();
             this.isMoving = false;
             if (this.onMoveEnd)this.onMoveEnd();
@@ -109,7 +109,7 @@ module hallmark{
             this.centerY = y;
             //}
 
-        }
+        }*/
 
      /*   private handleGesture(x1:number, y1:number, x2:number, y2:number):void {
             if (this.isMoving) {
@@ -258,9 +258,7 @@ module hallmark{
         }
 
 
-        onScaleStart():void{
-
-        }
+        onScaleStart:Function;
         onScale(num:number):void{
 
         }
@@ -276,9 +274,9 @@ module hallmark{
 
         }
 
-        onCenterStart(p:{x:number;y:number}):void{
+        onCenterStart:(p:{x:number;y:number})=>void;
 
-        }
+
 
         onCenterChange(dp:{dx:number;dy:number}){
 
@@ -293,6 +291,9 @@ module hallmark{
             return rec;
 
         }
+
+       
+
         private dispatchCenter():void{
             if(!this.centerStart){
                 this.centerStart = this.centerCurrent;
@@ -326,10 +327,10 @@ module hallmark{
             if(this.length !== length) this.onLengthChanged(length);
             this.calculateMotions();
             if(this.length==1){
-                this.dispatchPan();
+                if(this.onPanStart)this.dispatchPan();
             }else{
-                this.dispatcheScale();
-                this.dispatchCenter();
+                if(this.onScaleStart)this.dispatcheScale();
+                if(this.onCenterStart)this.dispatchCenter();
             }
 
 

@@ -9,44 +9,48 @@ var hallmark;
         function ImageDrag() {
             this.ticking = false;
             this.trigger = $({});
+            this.$testRec = $('<div>').attr('id', 'TestRec');
             this.$overlay = $("#overlay");
         }
-        ImageDrag.prototype.reqAnimationFrame = function (callBack) {
-            /*return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                };*/
-            requestAnimationFrame(function () { return callBack(); });
-        };
-        ;
+        /*  reqAnimationFrame (callBack:Function) {
+              /!*return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
+                      window.setTimeout(callback, 1000 / 60);
+                  };*!/
+              requestAnimationFrame ( () => callBack ());
+          };
+  
+  */
         ImageDrag.prototype.on1Touch = function () {
             var _this = this;
             this.dragControl.onPanStart = function () {
                 _this.startP = _this.model.getOffset();
-                console.log(_this.startP);
             };
             this.dragControl.onPan = function (dx, dy) {
                 _this.model.setOffset(_this.startP.x - dx, _this.startP.y - dy);
+                //this.folleowRectangle();;
             };
-            this.dragControl.onScaleStart = function () { };
-            this.dragControl.onScale = function (k) { };
-            this.dragControl.onCenterStart = function () { };
-            this.dragControl.onCenterChange = function (dp) { };
+            this.dragControl.onScaleStart = null;
+            this.dragControl.onScale = null;
+            this.dragControl.onCenterStart = null;
+            this.dragControl.onCenterChange = null;
         };
         ImageDrag.prototype.on2Touches = function () {
             var _this = this;
-            this.dragControl.onPanStart = function () {
-            };
-            this.dragControl.onPan = function (dx, dy) {
-            };
+            this.dragControl.onPanStart = null;
+            this.dragControl.onPan = null;
             this.dragControl.onScaleStart = function () {
                 _this.startScale = _this.model.getScale();
             };
             this.dragControl.onScale = function (k) {
                 _this.model.setScale(_this.startScale * k);
+                // this.folleowRectangle();
             };
-            this.dragControl.onCenterStart = function () {
+            this.dragControl.onCenterStart = function (p) {
                 _this.centerStart = _this.model.getCenter();
-                console.log(_this.centerStart);
+                var m = _this.model.toGlobal();
+                var x = (p.x - m.x) / m.scale;
+                var y = (p.y - m.y) / m.scale;
+                _this.model.setCenter(x, y);
             };
             this.dragControl.onCenterChange = function (dp) {
                 /*  if(this.centerStart){
@@ -74,6 +78,9 @@ var hallmark;
             this.dragControl.start();
             this.dragControl.on1touch = function () { return _this.on1Touch(); };
             this.dragControl.on2touches = function () { return _this.on2Touches(); };
+            // ImageDrag.model = model;
+            // this.$overlay.append(this.$testRec);
+            //this.folleowRectangle();
         };
         return ImageDrag;
     }());

@@ -45,48 +45,50 @@ module hallmark {
             this.$overlay = $("#overlay");
         }
 
-        reqAnimationFrame (callBack:Function) {
-            /*return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
+      /*  reqAnimationFrame (callBack:Function) {
+            /!*return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
                     window.setTimeout(callback, 1000 / 60);
-                };*/
+                };*!/
             requestAnimationFrame ( () => callBack ());
         };
 
-
+*/
         on1Touch():void{
             this.dragControl.onPanStart = ()=>{
                 this.startP = this.model.getOffset();
-                console.log(this.startP);
             }
             this.dragControl.onPan = (dx:number,dy:number)=>{
                 this.model.setOffset(this.startP.x-dx,this.startP.y-dy);
+                //this.folleowRectangle();;
             }
 
-            this.dragControl.onScaleStart = ()=>{ }
-            this.dragControl.onScale = (k:number)=>{}
-            this.dragControl.onCenterStart = ()=>{ }
-            this.dragControl.onCenterChange = (dp:{dx:number,dy:number})=>{}
+            this.dragControl.onScaleStart = null;
+            this.dragControl.onScale = null;
+            this.dragControl.onCenterStart = null;
+            this.dragControl.onCenterChange = null;
         }
 
         on2Touches():void{
 
-            this.dragControl.onPanStart = ()=>{
 
-            }
-            this.dragControl.onPan = (dx:number,dy:number)=>{
-
-            }
+            this.dragControl.onPanStart = null;
+            this.dragControl.onPan = null;
             this.dragControl.onScaleStart = ()=>{
                 this.startScale = this.model.getScale();
             }
             this.dragControl.onScale = (k:number)=>{
                 this.model.setScale(this.startScale*k);
-            }
-            this.dragControl.onCenterStart = ()=>{
-                this.centerStart = this.model.getCenter();
-                console.log(this.centerStart)
+               // this.folleowRectangle();
 
             }
+            this.dragControl.onCenterStart = (p:{x:number;y:number})=>{
+                this.centerStart = this.model.getCenter();
+                var m:Matr = this.model.toGlobal();
+                var x:number = (p.x-m.x)/m.scale;
+                var y:number =  (p.y-m.y)/m.scale;
+                this.model.setCenter(x,y);
+            }
+
             this.dragControl.onCenterChange = (dp:{dx:number,dy:number})=>{
 
               /*  if(this.centerStart){
@@ -103,6 +105,18 @@ module hallmark {
         }
 
 
+      /*  folleowRectangle():void{
+            var m:Matr = this.model.toGlobal();
+            this.$testRec.width(m.w);
+            this.$testRec.height(m.h);
+            this.$testRec.offset({left:m.x,top:m.y});
+
+           // this.$testRec.offset({left:m.x-(m.center.x*m.scale)+m.center.x,top:m.y-(m.center.y*m.scale)+m.center.y});
+
+        }
+*/
+        static model:ModelImage;
+
 
         centerStart:{x:number;y:number};
         dragControl:DragControl
@@ -110,6 +124,7 @@ module hallmark {
         startP:{x:number,y:number};
 
         startScale:number;
+        $testRec:JQuery = $('<div>').attr('id','TestRec');
         setImage(model:ModelImage) {
             if(this.model) this.model.removeDragImage();
 
@@ -123,8 +138,10 @@ module hallmark {
             this.dragControl.start();
             this.dragControl.on1touch = ()=>this.on1Touch();
             this.dragControl.on2touches =()=>this.on2Touches();
+           // ImageDrag.model = model;
+           // this.$overlay.append(this.$testRec);
 
-
+//this.folleowRectangle();
 
         }
     }
