@@ -72,7 +72,6 @@ namespace hallmark{
             this.drag.cartX = 90;
             this.drag.cartY = 435;
             this.shopingCart = new ShopingCart;
-            this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on ("DRAG_ON_CART", (evt, model) => this.shopingCart.addItem(model));
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
