@@ -42,7 +42,7 @@ var hallmark;
             return this;
         };
         ModelImage.prototype.appendToDrag = function ($cont) {
-            this.image3D = new hallmark.Image3D(this.large);
+            this.image3D = new hallmark.ImageTransform(this.large);
             var off = ModelImage.canvacView.offset();
             var p = this.canvasView.localToGlobal(0, 0);
             this.image3D.setOffset(off.left + p.x, off.top + p.y);

@@ -40,7 +40,7 @@ module hallmark{
         static trigger:JQuery = $({});
         static IMAGE_LOADED:string = "IMAGE_LOADED";
         categories: number [];
-        image3D:Image3D;
+        image3D:ImageTransform;
 
         setX(x:number):ModelImage{
             this.canvasView.x=x;
@@ -77,7 +77,7 @@ module hallmark{
 
 
         appendToDrag($cont:JQuery):ModelImage{
-            this.image3D = new Image3D(this.large);
+            this.image3D = new ImageTransform(this.large);
             var off = ModelImage.canvacView.offset();
             var p:Point = this.canvasView.localToGlobal(0,0);
             this.image3D.setOffset(off.left+p.x,off.top+p.y);

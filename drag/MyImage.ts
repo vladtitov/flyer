@@ -17,7 +17,7 @@ module hallmark{
         scale:number;
     }
 
-    export class Image3D{
+    export class ImageTransform{
 
         $image:JQuery
         image:HTMLImageElement;
@@ -163,7 +163,7 @@ module hallmark{
 
         }
 
-        resetElement ():Image3D {
+        resetElement ():ImageTransform {
             this.transform = {translate: {x:0, y:0},
                 scale: 1,
                 angle: 0,
