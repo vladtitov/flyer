@@ -113,7 +113,6 @@ module hallmark{
         }
 
         appendToDrag($cont:JQuery):ModelImage{
-
             this.$image = $('<img>').attr('src',this.large);
             this.imageClone = this.$image.get(0);
             this.$image.on('remove_me',()=>this.removeDragImage());
@@ -124,6 +123,7 @@ module hallmark{
             this.transform.translate.x = off.left+p.x;
             this.transform.translate.y = off.top+p.y;
             this.$image.appendTo($cont);
+            this.requestElementUpdate();
             return this;
         }
 /////////////////////
@@ -139,7 +139,6 @@ module hallmark{
         width:number =100;
         height:number=100;
         toGlobal():Matr{
-
             //m.x-(m.center.x*m.scale)+m.center.x
             return {
                 x:this.transform.translate.x-(this.centerCurrent.x*this.transform.scale)+this.centerCurrent.x,

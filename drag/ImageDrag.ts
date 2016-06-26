@@ -22,24 +22,10 @@ module hallmark {
 
     export class ImageDrag {
         model:ModelImage;
-        private startX:number;
-        private startY:number;
-        private mouseStartX:number;
-        private mouseStartY:number;
-        private currentX:number;
-        private currentY:number;
         private $overlay:JQuery;
-        private ticking:boolean = false;
-        transform:{scale: number; angle: number};
-        private timer:number;
-        private mc:HammerManager;
-        private img:HTMLElement;
-        private $image:JQuery;
         cartX:number;
         cartY:number;
         trigger:JQuery = $({});
-        shopingCart:ShopingCart;
-
 
         constructor() {
             this.$overlay = $("#overlay");
@@ -69,10 +55,9 @@ module hallmark {
         }
 
         on2Touches():void{
-
-
             this.dragControl.onPanStart = null;
             this.dragControl.onPan = null;
+
             this.dragControl.onScaleStart = ()=>{
                 this.startScale = this.model.getScale();
             }
@@ -133,15 +118,11 @@ module hallmark {
             this.model.resetElement();
             this.$overlay.children().triggerHandler('remove_me');
             this.model.appendToDrag(this.$overlay);
-            this.model.renderTransform();
+            if(this.dragControl)this.dragControl.destroy();
             this.dragControl = new DragControl(model.imageClone);
-            this.dragControl.start();
+
             this.dragControl.on1touch = ()=>this.on1Touch();
             this.dragControl.on2touches =()=>this.on2Touches();
-           // ImageDrag.model = model;
-           // this.$overlay.append(this.$testRec);
-
-//this.folleowRectangle();
 
         }
     }

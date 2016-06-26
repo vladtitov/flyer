@@ -7,7 +7,6 @@ var hallmark;
 (function (hallmark) {
     var ImageDrag = (function () {
         function ImageDrag() {
-            this.ticking = false;
             this.trigger = $({});
             this.$testRec = $('<div>').attr('id', 'TestRec');
             this.$overlay = $("#overlay");
@@ -73,14 +72,11 @@ var hallmark;
             this.model.resetElement();
             this.$overlay.children().triggerHandler('remove_me');
             this.model.appendToDrag(this.$overlay);
-            this.model.renderTransform();
+            if (this.dragControl)
+                this.dragControl.destroy();
             this.dragControl = new hallmark.DragControl(model.imageClone);
-            this.dragControl.start();
             this.dragControl.on1touch = function () { return _this.on1Touch(); };
             this.dragControl.on2touches = function () { return _this.on2Touches(); };
-            // ImageDrag.model = model;
-            // this.$overlay.append(this.$testRec);
-            //this.folleowRectangle();
         };
         return ImageDrag;
     }());

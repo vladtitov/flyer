@@ -77,6 +77,7 @@ var hallmark;
             this.transform.translate.x = off.left + p.x;
             this.transform.translate.y = off.top + p.y;
             this.$image.appendTo($cont);
+            this.requestElementUpdate();
             return this;
         };
         /////////////////////
