@@ -36,7 +36,7 @@ module hallmark {
         shopingCart:ShopingCart;
         trigger:JQuery = $({});
         speed:number;
-        speedSpin:number = 40;
+        speedSpin:number = 20;
         isFriction:boolean;
 
         constructor(private  lib:CollectionImages, private opt:any, private id:number) {
@@ -81,6 +81,7 @@ module hallmark {
                     this.touchControler.speed *= this.friction;
                     if (this.speed <5 && this.touchControler.isSpin) {
                         this.touchControler.isMove = false;
+                        this.touchControler.isSpin = false;
                         this.stopOnImage ();
                         this.onMoveStop();
                     }

@@ -18,7 +18,7 @@ var hallmark;
             this.id = id;
             this.images = [];
             this.trigger = $({});
-            this.speedSpin = 40;
+            this.speedSpin = 20;
             //view.setBounds(0,0,options.rowWidth,options.rowHeight);
             this.dist = opt.thumbDistance;
             var cont = new Container();
@@ -55,6 +55,7 @@ var hallmark;
                     _this.touchControler.speed *= _this.friction;
                     if (_this.speed < 5 && _this.touchControler.isSpin) {
                         _this.touchControler.isMove = false;
+                        _this.touchControler.isSpin = false;
                         _this.stopOnImage();
                         _this.onMoveStop();
                     }

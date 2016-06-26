@@ -51,6 +51,7 @@ import Container = createjs.Container;
     init () {
 
         this.view.addEventListener('mousedown', (evt:any)=> {
+            if (this.isSpin) return;
             this.isMove = false;
           //  this.isHold = false;
             this.pointerid = evt.pointerID;
@@ -70,6 +71,7 @@ import Container = createjs.Container;
 
         this.view.addEventListener('pressup', (evt:any)=> {
             if(this.isMove) return;
+            if (this.isSpin) return;
             if( this.clickTimer !==0) this.onClick(evt);
           /*  var x:number = evt.startX;
             var y:number = evt.startY;
@@ -95,6 +97,7 @@ import Container = createjs.Container;
 
         this.view.addEventListener('pressmove', (evt:any)=> {
           //  if (this.isHold) return;
+            if (this.isSpin) return;
             if (evt.pointerID !== this.pointerid) return;
             var nowY:number = evt.stageY;
             var nowX:number = evt.startX;
@@ -132,7 +135,6 @@ import Container = createjs.Container;
         this.isMove = true;
         this.isSpin = true; 
         this.speed = speed;
-        this.view.removeAllEventListeners();
         this.move(speed);
     }
 

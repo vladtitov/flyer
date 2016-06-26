@@ -22,6 +22,8 @@ var hallmark;
         TouchControler.prototype.init = function () {
             var _this = this;
             this.view.addEventListener('mousedown', function (evt) {
+                if (_this.isSpin)
+                    return;
                 _this.isMove = false;
                 //  this.isHold = false;
                 _this.pointerid = evt.pointerID;
@@ -41,6 +43,8 @@ var hallmark;
             });
             this.view.addEventListener('pressup', function (evt) {
                 if (_this.isMove)
+                    return;
+                if (_this.isSpin)
                     return;
                 if (_this.clickTimer !== 0)
                     _this.onClick(evt);
@@ -65,6 +69,8 @@ var hallmark;
             });
             this.view.addEventListener('pressmove', function (evt) {
                 //  if (this.isHold) return;
+                if (_this.isSpin)
+                    return;
                 if (evt.pointerID !== _this.pointerid)
                     return;
                 var nowY = evt.stageY;
@@ -98,7 +104,6 @@ var hallmark;
             this.isMove = true;
             this.isSpin = true;
             this.speed = speed;
-            this.view.removeAllEventListeners();
             this.move(speed);
         };
         TouchControler.prototype.onPressHold = function (evt) {

@@ -70,7 +70,6 @@ var hallmark;
             this.currentX = this.startX + ev.deltaX;
             this.currentY = this.startY + ev.deltaY;
             this.model.setOffset(this.currentX, this.currentY);
-            console.log(this.currentX, this.currentY);
             if (this.currentX < this.cartX + 85 && this.currentY > this.cartY - 95 && this.currentX > this.cartX - 55 && this.currentY < this.cartY + 95)
                 this.trigger.triggerHandler('ON_CART');
             else
@@ -97,9 +96,10 @@ var hallmark;
             this.mc.on("pinchstart pinchmove");
         }*/
         ImageDrag.prototype.onSwipeRightLeft = function (ev) {
-            var x = this.$image.offset().left - 100;
-            if (ev.type == "swiperight")
-                x += 200;
+            if (ev.type == "swipeleft")
+                var x = 0;
+            else
+                x = 200;
             this.$image.animate({ left: x });
             this.model.removeDragImage();
             this.reset();

@@ -69,7 +69,6 @@ namespace hallmark{
             this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
             this.drag.cartX = $("#shopcart").offset().left;
             this.drag.cartY = $("#shopcart").offset().top;
-            console.log(this.drag.cartX, this.drag.cartY);
             this.shopingCart = new ShopingCart;
             this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on ("DRAG_ON_CART", (evt, model) => this.shopingCart.addItem(model));
@@ -85,6 +84,7 @@ namespace hallmark{
                  this.createColumns(options);
              })
             this.initSpin();
+            this.initCart();
            /* ImagesColumn.onImageClick = (DO:DisplayObject)=>{
                 var img:ModelImage =  this.imagesLibrary.getImageByReference(DO);
                 if(img) this.preview.showImage(DO,img);
@@ -141,8 +141,8 @@ namespace hallmark{
 
             }
         }
-        
-        onColumnStop () {
+
+        onColumnStop ():void {
             var stop:boolean = true;
             this.collectionColumn.forEach( function (item:ImagesColumn) {
                 if (item.isMove () ) stop = false;
@@ -150,11 +150,10 @@ namespace hallmark{
             if (stop) {
                 $('#spin').css("background-image", "url('btn_spin_normal.png')");
                 this.initSpin();
-                //this.touchControler.init();
             };
         };
         
-        private onImageSelected (model:ModelImage) {
+        private onImageSelected (model:ModelImage):void {
             this.showItem ();
             this.drag.setImage(model);
         }
@@ -200,13 +199,12 @@ namespace hallmark{
             });
         }
 
-        /*$(document).addEventListener('orientationchange', (evt)=> {
-            this.drag.cartX = $("#shopcart").offset().left;
-            this.drag.cartY = $("#shopcart").offset().top;
-        });*/
-
-
-        
+        initCart () {
+            window.addEventListener("resize", (evt)=> {
+                this.drag.cartX = $("#shopcart").offset().left;
+                this.drag.cartY = $("#shopcart").offset().top;
+             });
+        }
     }
 
     interface Images{

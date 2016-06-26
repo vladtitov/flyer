@@ -33,8 +33,19 @@ button {
     height: 90px;
     background-image: url("coupon.jpg");
     background-repeat: no-repeat;
-    background-size: auto 100px;
+    background-size: auto 90px;
     background-position: center;
+}
+
+#coupon-landscape {
+    margin: 5px 0;
+    height: 90px;
+    width: 46vw;
+    background-image: url("coupon.jpg");
+    background-repeat: no-repeat;
+    background-size: auto 90px;
+    background-position: center;
+    display: none;
 }
 
 #overlay img {
@@ -97,6 +108,7 @@ button {
     position: absolute;
     top: 50%;
     margin-top: -22px;
+    z-index: 1;
 }
 
 .right {
@@ -110,6 +122,7 @@ button {
     height: 425px;
     background-image: url("slots.png");
     background-position: center center;
+    background-repeat: no-repeat;
     display:flex;
     position: relative;
     margin: 0 auto;
@@ -141,8 +154,25 @@ button {
         float: left;
     }
 
+    #coupon-landscape {
+        display: block;
+    }
+
     #slots {
         float: left;
         height: 100vh;
+    }
+
+    #spin_container {
+        clear: both;
+    }
+
+    #shopcart {
+        margin: 20px 0 20px 10px;
+    }
+
+    #shopcartitems {
+        float: left;
+        margin-top: 20px;
     }
 }
