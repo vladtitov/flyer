@@ -21,7 +21,7 @@ module hallmark {
         }
 
         addItem(model:ModelImage) {
-            model.resetElement().renderTransform();
+          //  model.resetElement().renderTransform();
             var $img = model.$image;
             var cont:JQuery = this.addPlaceHolder();
             cont.hide();
