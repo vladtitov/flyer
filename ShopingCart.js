@@ -12,7 +12,7 @@ var hallmark;
             this.$list = $("#shopinglist");
         }
         ShopingCart.prototype.addItem = function (model) {
-            model.resetElement().renderTransform();
+            //  model.resetElement().renderTransform();
             var $img = model.$image;
             var cont = this.addPlaceHolder();
             cont.hide();

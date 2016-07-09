@@ -4,11 +4,12 @@
 ///<reference path="typings/jquery.d.ts"/>
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
-///<reference path="ImagesColumn.ts"/>
+///<reference path="drum/ImagesColumn.ts"/>
 ///<reference path="CollectionImages.ts"/>
-///<reference path="ImageView.ts"/>
-///<reference path="ImageDrag.ts"/>
+
 ///<reference path="ShopingCart.ts"/>
+///<reference path="drag/ImageDrag.ts"/>
+
 
 
 
@@ -59,7 +60,7 @@ namespace hallmark{
         isWebGL:boolean;
         imagesLibrary:CollectionImages;
         private current:number;
-        private preview:ImagePreview;
+      //  private preview:ImagePreview;
         private drag:ImageDrag;
         private shopingCart:ShopingCart;
         private canvasView:JQuery;
@@ -67,11 +68,10 @@ namespace hallmark{
             this.canvasView =$("#canvasview");
             ModelImage.canvacView = this.canvasView;
             this.drag = new ImageDrag ();
-            this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
+            //this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
             this.drag.cartX = 90;
             this.drag.cartY = 435;
             this.shopingCart = new ShopingCart;
-            this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on ("DRAG_ON_CART", (evt, model) => this.shopingCart.addItem(model));
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
@@ -90,7 +90,7 @@ namespace hallmark{
                 this.stage.addChild(this.preview.view);
             }*/
 
-            this.preview = new ImagePreview(options);
+           // this.preview = new ImagePreview(options);
 
             createjs.Touch.enable(this.stage);
             createjs.Ticker.framerate = 60;
@@ -119,7 +119,7 @@ namespace hallmark{
 
         private dragedOnCart():void{
             var model:ModelImage = this.drag.model;
-            this.drag.reset();
+           // this.drag.reset();
         }
         
         createColumns(options):void{
@@ -179,8 +179,8 @@ $(document).ready(function(){
     var options={
         canvasWidth:width,
         canvasHeight:height,
-        server:'http://front-desk.ca/gallery/',
-        getimages:'getimages',
+        server:'http://192.168.1.12/GitHub/flyer/',
+        getimages:'getimages.php',
         thumbSize:100,
         thumbDistance:110,
         rowHeight: height,

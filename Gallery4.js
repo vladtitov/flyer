@@ -4,11 +4,10 @@
 ///<reference path="typings/jquery.d.ts"/>
 /// <reference path="typings/tweenjs.d.ts" />
 /// <reference path="typings/easeljs.d.ts" />
-///<reference path="ImagesColumn.ts"/>
+///<reference path="drum/ImagesColumn.ts"/>
 ///<reference path="CollectionImages.ts"/>
-///<reference path="ImageView.ts"/>
-///<reference path="ImageDrag.ts"/>
 ///<reference path="ShopingCart.ts"/>
+///<reference path="drag/ImageDrag.ts"/>
 var hallmark;
 (function (hallmark) {
     var ImagesRowOpt = (function () {
@@ -24,11 +23,10 @@ var hallmark;
             this.canvasView = $("#canvasview");
             hallmark.ModelImage.canvacView = this.canvasView;
             this.drag = new hallmark.ImageDrag();
-            this.drag.trigger.on('ON_CART', function () { return _this.drag.dragOnCart(); });
+            //this.drag.trigger.on('ON_CART',()=>this.drag.dragOnCart());
             this.drag.cartX = 90;
             this.drag.cartY = 435;
             this.shopingCart = new hallmark.ShopingCart;
-            this.drag.shopingCart = this.shopingCart;
             this.drag.trigger.on("DRAG_ON_CART", function (evt, model) { return _this.shopingCart.addItem(model); });
             var canv = document.createElement('canvas');
             canv.width = options.canvasWidth;
@@ -45,7 +43,7 @@ var hallmark;
                  if(img) this.preview.showImage(DO,img);
                  this.stage.addChild(this.preview.view);
              }*/
-            this.preview = new hallmark.ImagePreview(options);
+            // this.preview = new ImagePreview(options);
             createjs.Touch.enable(this.stage);
             createjs.Ticker.framerate = 60;
             var stage = this.stage;
@@ -69,7 +67,7 @@ var hallmark;
         });*/
         Gallery4.prototype.dragedOnCart = function () {
             var model = this.drag.model;
-            this.drag.reset();
+            // this.drag.reset();
         };
         Gallery4.prototype.createColumns = function (options) {
             var _this = this;
@@ -107,8 +105,8 @@ $(document).ready(function () {
     var options = {
         canvasWidth: width,
         canvasHeight: height,
-        server: 'http://front-desk.ca/gallery/',
-        getimages: 'getimages',
+        server: 'http://192.168.1.12/GitHub/flyer/',
+        getimages: 'getimages.php',
         thumbSize: 100,
         thumbDistance: 110,
         rowHeight: height,

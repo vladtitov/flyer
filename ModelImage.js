@@ -2,7 +2,7 @@
  * Created by Vlad on 6/18/2016.
  */
 ///<reference path="CollectionImages.ts"/>
-///<reference path="ImageDrag.ts"/>
+///<reference path="drag/MyImage.ts"/>
 var hallmark;
 (function (hallmark) {
     var Container = createjs.Container;
@@ -10,7 +10,6 @@ var hallmark;
     var ModelImage = (function () {
         function ModelImage(vo) {
             this.vo = vo;
-            this.transformType = "transform";
             for (var str in vo)
                 this[str] = vo[str];
             var size = ModelImage.thumbSize;
@@ -19,7 +18,7 @@ var hallmark;
             this.canvasView = new Container();
             this.canvasView.mouseChildren = false;
             this.canvasView.name = 'canvasView_' + this.id;
-            this.resetElement();
+            //this.resetElement ();
             this.loadImage();
             var sh = new Shape();
             sh.name = 'shape';
@@ -42,69 +41,19 @@ var hallmark;
             cont.addChild(this.canvasView);
             return this;
         };
-        ModelImage.prototype.resetElement = function () {
-            this.transform = { translate: { x: 0, y: 0 },
-                scale: 1,
-                angle: 0,
-                rx: 0,
-                ry: 0,
-                rz: 0
-            };
-            return this;
-        };
-        ModelImage.prototype.removeDragImage = function () {
-            var $img = this.$image;
-            $img.fadeOut('slow', function () { $img.remove(); });
-            return this;
-        };
         ModelImage.prototype.appendToDrag = function ($cont) {
-            var _this = this;
-            this.$image = $(this.image).clone();
-            this.imageClone = this.$image.get(0);
-            this.$image.on('remove_me', function () { return _this.removeDragImage(); });
+            this.image3D = new hallmark.ImageTransform(this.large);
             var off = ModelImage.canvacView.offset();
             var p = this.canvasView.localToGlobal(0, 0);
-            /*off.left+=p.x;
-            off.top+=p.y;*/
-            this.transform.translate.x = off.left + p.x;
-            this.transform.translate.y = off.top + p.y;
-            this.$image.appendTo($cont);
+            this.image3D.setOffset(off.left + p.x, off.top + p.y);
+            this.image3D.appendTo($cont);
+            this.image3D.createDragControl();
             return this;
-        };
-        ModelImage.prototype.setOffset = function (x, y) {
-            this.transform.translate.x = x;
-            this.transform.translate.y = y;
-        };
-        ModelImage.prototype.getOffset = function () {
-            return { x: this.transform.translate.x, y: this.transform.translate.y };
-        };
-        ModelImage.prototype.renderTransform = function () {
-            var value_array = [
-                'translate3d(' + this.transform.translate.x + 'px, ' + this.transform.translate.y + 'px, 0)',
-                'scale(' + this.transform.scale + ', ' + this.transform.scale + ')',
-                'rotate3d(' + this.transform.rx + ',' + this.transform.ry + ',' + this.transform.rz + ',' + this.transform.angle + 'deg)'
-            ];
-            var value = value_array.join(" ");
-            this.imageClone.style.webkitTransform = value;
-            //this.image.style.mozTransform = value;
-            //this.image.style[this.transformType] = value;
-        };
-        ModelImage.prototype.setScale = function (scale) {
-            this.transform.scale = scale;
-        };
-        ModelImage.prototype.setAngle = function (angle) {
-            this.transform.rz = 1;
-            this.transform.angle = angle;
-        };
-        ModelImage.prototype.getScale = function () {
-            return this.transform.scale;
-        };
-        ModelImage.prototype.getAngle = function () {
-            return this.transform.angle;
         };
         ModelImage.prototype.loadImage = function () {
             var _this = this;
             var img = new Image();
+            // img.crossOrigin = "anonymous";
             img.src = this.thumb;
             var size = ModelImage.thumbSize;
             img.onload = function (event) {
@@ -114,6 +63,7 @@ var hallmark;
                 if (w < h)
                     s = size / h;
                 var bmp = new createjs.Bitmap(img);
+                //   bmp.cache( 0, 0,size, size);
                 bmp.name = 'bmp';
                 bmp.scaleX = s;
                 bmp.scaleY = s;
@@ -126,6 +76,7 @@ var hallmark;
                 ModelImage.trigger.triggerHandler(ModelImage.IMAGE_LOADED);
             };
             this.image = img;
+            this.$image = $(img);
         };
         ModelImage.trigger = $({});
         ModelImage.IMAGE_LOADED = "IMAGE_LOADED";
